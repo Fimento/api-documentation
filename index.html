@@ -1,0 +1,28 @@
+<!-- HTML for static distribution bundle build -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Fimento API</title>
+  <link rel="icon" type="image/png" href="./dist/favicons/favicon.svg">
+  <link rel="mask-icon" href="./dist/favicons/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="./dist/css/global.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+</head>
+
+<body class="fimento-page">
+  <div class="fimento-content">
+    <redoc spec-url='./specifications.yml'></redoc>
+  </div>
+  <footer class="fimento-footer">
+    <p>Copyright ©<span id="year"></span>Fimento. Alla rättigheter förbehålls.</p>
+  </footer>
+  <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"> </script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+
+</html>
