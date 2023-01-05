@@ -1,0 +1,452 @@
+openapi: 3.0.0
+info:
+  title: Fimento Partner API
+  version: 1.0.0
+  description: |
+    The Fimento Open API can be used by Fimento's partners in order to provide financial products to their end customers within their own application/website.
+
+    # Test objects
+    Test objects can be used in the staging environment in order to test specific flows. If one of the organsiation of the application has its `organisationNumber` equal to one of the test object, the `applicationStatus` returned by Fimento for the create application endpoint will always be the same one as described in the following table:
+    Organisation Number|Application Status|Comment
+    ----------------------|------------------|-------
+    Undefined or anything but the below |`granted`|-
+    2222222 |`refer`|-
+    1111111 |`denied`|-
+servers:
+- url: https://api.fimento.com/
+  description: Production server
+- url: https://api.stage.fimento.com/
+  description: Staging server
+
+paths:
+  /application:
+    post:
+      tags:
+      - Application endpoints
+      summary: Create Application
+      description: Send a new application to Fimento
+      requestBody:
+        $ref: "#/components/requestBodies/create"
+      responses:
+        200:
+          $ref: "#/components/responses/extendedApplication"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        500:
+          $ref: "#/components/responses/serverError"
+        503:
+          $ref: "#/components/responses/serviceError"
+      security:
+      - oAuth2ClientCredentials: []
+
+  /application/{applicationId}/mark-as-confirmed:
+    put:
+      tags:
+      - Application endpoints
+      summary: Mark Application As Confirmed
+      description: This endpoint can be used to notify Fimento when the customer decides to confirm an application, so the decision process will continue.
+      parameters:
+      - name: applicationId
+        in: path
+        description: Application's id as set in the application response object
+        required: true
+        schema: {}
+      requestBody:
+        $ref: "#/components/requestBodies/create"
+      responses:
+        200:
+          $ref: "#/components/responses/extendedApplication"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        500:
+          $ref: "#/components/responses/serverError"
+        503:
+          $ref: "#/components/responses/serviceError"
+      security:
+      - oAuth2ClientCredentials: []
+
+  /application/{applicationId}:
+    get:
+      tags:
+      - Application endpoints
+      summary: Get Application
+      description: Fetch an application
+      parameters:
+      - name: applicationId
+        in: path
+        description: Application's id as set in the application response object
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: "#/components/responses/extendedApplication"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        404:
+          $ref: "#/components/responses/notFoundError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+      - oAuth2ClientCredentials: []
+
+  /order/{accountId}:
+    get:
+      tags:
+      - Order endpoints
+      summary: Get Order
+      description: Fetch an order
+      parameters:
+      - name: accountId
+        in: path
+        description: Account's id as set in the account response object
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: "#/components/responses/extendedApplication"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        404:
+          $ref: "#/components/responses/notFoundError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+      - oAuth2ClientCredentials: []
+
+  /customer/{customerId}:
+    get:
+      tags:
+      - Customer endpoints
+      summary: Get Customer
+      description: Fetch a customer
+      parameters:
+      - name: customerId
+        in: path
+        description: Customer's id as set in the customer response object
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: "#/components/responses/extendedApplication"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        404:
+          $ref: "#/components/responses/notFoundError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+      - oAuth2ClientCredentials: []
+
+components:
+  requestBodies:
+    create:
+      required: true
+      description: New Application Data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/application"
+
+  responses:
+    application:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/application"
+
+    extendedApplication:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/extendedApplication"
+
+    empty:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+
+    file:
+      description: Binary file
+      content:
+        application/pdf:
+          schema:
+            type: string
+            format: binary
+
+    dataError:
+      description: Invalid data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/dataError"
+
+    authError:
+      description: Invalid authentication
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/authError"
+
+    notFoundError:
+      description: Application not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/notFoundError"
+
+    serverError:
+      description: Internal Server Error. If the problem persists contact the technical support
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/serverError"
+
+    serviceError:
+      description: Service Error. If the problem persists contact the technical support
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/serviceError"
+
+  schemas:
+    application:
+      type: object
+      required:
+      - amount
+      - repaymentTime
+      - applicants
+      properties:
+        referenceId:
+          type: string
+          description: Partner reference id for the application
+          example: "12345"
+        amount:
+          type: number
+          description: Amount requested to borrow in SEK (including refinancing)
+          minimum: 0
+          exclusiveMinimum: true
+          example: 100000
+        amountToRefinance:
+          type: number
+          description: Amount used exclusively to refinance existing loans in SEK
+          minimum: 0
+          exclusiveMinimum: true
+          example: 50000
+        repaymentTime:
+          type: number
+          description: Repayment time requested in months
+          minimum: 0
+          exclusiveMinimum: true
+          example: 24
+        preferredInterestRate:
+          type: number
+          description: Preferred interest rate for the customer in percent. This can be used in case of a special partnership with Fimento where the comission of the partner will depend of the interest rate sold to the end customer.
+          minimum: 0
+          exclusiveMinimum: true
+          example: 6.05
+        reasonForLoan:
+          type: string
+          description: Purpose of the loan. The enum values will be provided to the partner.
+          enum:
+          - down-payment
+          - consolidate-loans
+          - vehicle
+          - rennovation
+          - travel
+          - shopping
+          - studies
+          - services
+          - financial-security
+          - health
+          - necessities
+          - other
+          example: vehicle
+        isBorrowingForOwnUse:
+          type: boolean
+          description: Indicate if customer is applying for a loan for himself or if he is applying on behalf of someone else.
+          example: true
+        termsApproved:
+          type: boolean
+          description: Indicate if customer accepted Fimento's terms and conditions
+          example: true
+        canBeProfiled:
+          type: boolean
+          description: Indicate if customer accepted can be profiled by Fimento to take a credit decision
+          example: true
+        bankAccountId:
+          type: string
+          description: Unique identifier of the bank account chosen for the payout by the customer from the list of accounts returned by the "/bank/send-code" endpoint
+          example: '12345'
+        applicants:
+          type: array
+          items:
+            $ref: "#/components/schemas/applicant"
+
+    extendedApplication:
+      allOf:
+        - $ref: "#/components/schemas/application"
+        - type: object
+          required:
+          - id
+          - applicationStatus
+          properties:
+            id:
+              type: string
+              description: Unique identifier of the application
+              example: '12345'
+            applicationStatus:
+              $ref: "#/components/schemas/applicationStatus"
+
+    applicant:
+      type: object
+      required:
+      - socialSecurityNumber
+      - email
+      - phone
+      properties:
+        email:
+          type: string
+          description: Email of the applicant. Used to communicate loan agreement
+          pattern: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i
+          example: test@example.com
+        phone:
+          type: string
+          description: Phone number of the applicant (preferably mobile phone). Used to communicate loan agreement if it is a mobile phone number
+          format: international or swedish format
+          example: "+46731234567"
+        isNotPEP:
+          type: boolean
+          description: Indicate if the customer is politically exposed
+          example: true
+        comments:
+          type: array
+          items:
+            type: object
+            properties:
+              comment:
+                type: string
+                description: Comments that underwriters or the system can use as notes for the applicant or application
+                format: string
+              date:
+                type: string
+                description: Date of the comment
+                format: date
+
+    applicationStatus:
+      type: string
+      enum:
+        - denied
+        - pending
+        - granted
+        - signed
+        - payed-out
+        - expired
+      default: pending
+      description: |
+        Current status of an application.
+        Possible values are
+        * denied -> application is denied and no manual review is necessary.
+        * pending -> application is preliminary granted but will go through manual review before being granted.
+        * granted -> application is granted and no manual review is necessary. Waiting for applicant(s) to sign the loan agreement.
+        * signed -> application is signed by applicant(s).
+        * payed-out -> loan is payed out.
+        * expired -> application is expired.
+
+    error:
+      type: object
+      required:
+      - status
+      - message
+      - errors
+      properties:
+        status:
+          type: integer
+          description: HTTP status code
+        message:
+          type: string
+          description: Main error reason
+        errors:
+          type: array
+          description: List of errors messages to describe the issue in more details
+          items:
+            type: string
+
+    dataError:
+      allOf:
+        - $ref: "#/components/schemas/error"
+        - type: object
+          properties:
+            status:
+              example: 400
+            message:
+              example: INVALID_REQUEST
+            errors:
+              type: array
+              items:
+                example: Field ... should be defined
+
+    authError:
+      allOf:
+        - $ref: "#/components/schemas/error"
+        - type: object
+          properties:
+            status:
+              example: 401
+            message:
+              example: Unauthorized
+
+    notFoundError:
+      allOf:
+        - $ref: "#/components/schemas/error"
+        - type: object
+          properties:
+            status:
+              example: 404
+            message:
+              example: Application not found
+
+    serverError:
+      allOf:
+        - $ref: "#/components/schemas/error"
+        - type: object
+          properties:
+            status:
+              example: 500
+            message:
+              example: Internal Server Error
+
+    serviceError:
+      allOf:
+        - $ref: "#/components/schemas/error"
+        - type: object
+          properties:
+            status:
+              example: 503
+            message:
+              example: Service unavailable
+
+  securitySchemes:
+    oAuth2ClientCredentials:
+      type: oauth2
+      description: This API uses OAuth2
+      flows:
+        clientCredentials:
+          tokenUrl: 'authorization/authenticate'
+          scopes: {}
