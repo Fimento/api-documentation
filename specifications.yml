@@ -398,6 +398,14 @@ components:
         order:
           $ref: "#/components/schemas/order"
 
+    customerGetSuccess:
+      type: object
+      required:
+      - customer
+      properties:
+        customer:
+          $ref: "#/components/schemas/customer"
+
     order:
       type: object
       properties:
@@ -443,6 +451,14 @@ components:
           type: number
           description: Number of days the order is passed its due date
           example: "50"
+
+    customer:
+       type: object
+       properties:
+        id:
+          type: string
+          description: Order id
+          example: "63b597c72e7e42972e5dec23"
 
     transaction:
       type: object
