@@ -19,11 +19,52 @@ servers:
   description: Staging server
 
 paths:
+  /application/customer:
+    post:
+      tags:
+      - Application endpoints
+      summary: Create a customer
+      description: Create a customer and return its credit information
+      requestBody:
+        $ref: "#/components/requestBodies/customerApplication"
+      responses:
+        200:
+          $ref: "#/components/responses/extendedApplication"
+      security:
+        - oAuth2ClientCredentials: []
+
+  /application/customer/{customerApplicationId}:
+    get:
+      tags:
+      - Application endpoints
+      summary: Get a customer application
+      description: Fetch a customer application
+      parameters:
+      - name: customerApplicationId
+        in: path
+        description: Customer application's id as set in the customer application response object
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: "#/components/responses/extendedApplication"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        404:
+          $ref: "#/components/responses/notFoundError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+      - oAuth2ClientCredentials: []
+
   /application/order:
     post:
       tags:
       - Application endpoints
-      summary: Create Application
+      summary: Create an order application
       description: Send a new application for an order to be created in the system, and run decision rules
       requestBody:
         $ref: "#/components/requestBodies/createOrderApplication"
@@ -45,7 +86,7 @@ paths:
     put:
       tags:
       - Application endpoints
-      summary: Confirm application
+      summary: Confirm an order application
       description: This endpoint can be used to notify Fimento when the customer decides to confirm an application and generate the order in Fimento system.
       parameters:
       - name: applicationId
@@ -137,46 +178,6 @@ paths:
       responses:
         200:
           $ref: "#/components/responses/customerGetSuccess"
-        400:
-          $ref: "#/components/responses/dataError"
-        401:
-          $ref: "#/components/responses/authError"
-        404:
-          $ref: "#/components/responses/notFoundError"
-        500:
-          $ref: "#/components/responses/serverError"
-      security:
-      - oAuth2ClientCredentials: []
-
-  /customer-application:
-    post:
-      tags:
-      - Customer application endpoints
-      summary: Create a customer and apply for credit limit
-      requestBody:
-        $ref: "#/components/requestBodies/customerApplication"
-      responses:
-        200:
-          $ref: "#/components/responses/extendedApplication"
-      security:
-        - oAuth2ClientCredentials: []
-
-  /customer-application/{customerApplicationId}:
-    get:
-      tags:
-      - Customer application endpoints
-      summary: Get Customer Application
-      description: Fetch a customer application
-      parameters:
-      - name: customerApplicationId
-        in: path
-        description: Customer application's id as set in the customer application response object
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          $ref: "#/components/responses/extendedApplication"
         400:
           $ref: "#/components/responses/dataError"
         401:
