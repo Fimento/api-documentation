@@ -103,7 +103,7 @@ paths:
       parameters:
       - name: accountId
         in: path
-        description: Account's id as set in the account response object
+        description: Order's id
         required: true
         schema:
           type: string
@@ -130,7 +130,7 @@ paths:
       parameters:
       - name: customerId
         in: path
-        description: Customer's details id as set in the customer response object
+        description: Customer's id
         required: true
         schema:
           type: string
@@ -358,20 +358,10 @@ components:
       $ref: "#/components/schemas/application"
 
     orderGetSuccess:
-      type: object
-      required:
-      - order
-      properties:
-        order:
-          $ref: "#/components/schemas/order"
+      $ref: "#/components/schemas/order"
 
     customerGetSuccess:
-      type: object
-      required:
-      - customer
-      properties:
-        customer:
-          $ref: "#/components/schemas/customer"
+      $ref: "#/components/schemas/customer"
 
     order:
       type: object
