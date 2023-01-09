@@ -101,7 +101,7 @@ paths:
         required: true
         schema: {}
       responses:
-        204:
+        200:
           $ref: "#/components/responses/markAsConfirmedSuccess"
         400:
           $ref: "#/components/responses/dataError"
@@ -276,6 +276,15 @@ components:
   responses:
     markAsConfirmedSuccess:
       description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              orderId:
+                type: string
+                description: The new order Id
+                example: 'AFancyId'
 
     orderApplicationGetSuccess:
       description: Successful operation
