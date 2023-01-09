@@ -26,10 +26,10 @@ paths:
       summary: Create a customer
       description: Create a customer and return its credit information
       requestBody:
-        $ref: "#/components/requestBodies/customerApplication"
+        $ref: "#/components/requestBodies/createCustomerApplication"
       responses:
         200:
-          $ref: "#/components/responses/extendedApplication"
+          $ref: "#/components/responses/customerGetSuccess"
       security:
         - oAuth2ClientCredentials: []
 
@@ -48,7 +48,7 @@ paths:
           type: string
       responses:
         200:
-          $ref: "#/components/responses/extendedApplication"
+          $ref: "#/components/responses/customerGetSuccess"
         400:
           $ref: "#/components/responses/dataError"
         401:
@@ -244,6 +244,14 @@ components:
           schema:
             $ref: "#/components/schemas/orderApplication"
 
+    createCustomerApplication:
+      required: true
+      description: New customer Data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/customerApplication"
+
   responses:
     markAsConfirmedSuccess:
       description: Successful operation
@@ -355,6 +363,38 @@ components:
           description: Name of article
           example: Article
 
+    customerApplication:
+      type: object
+      required:
+      - organisationNumber
+      - country
+      - name
+      - creditLimit
+      - currency
+      properties:
+        organisationNumber:
+          type: string
+          description: National identifier of the customer
+          example: "5566778899"
+        country:
+          type: string
+          format: ISO 3166-1 alpha-2
+          description: Country of the customer
+          example: NO
+        name:
+          type: string
+          description: Customer's name
+          example: A fancy customer
+        creditLimit:
+          type: number
+          description: The credit limit wished for this customer
+          example: 20000
+        currency:
+          type: string
+          format: ISO 4217
+          description: Currency of the credit limit and other amounts related to this customer
+          example: NOK
+
     orderApplicationGetSuccess:
       $ref: "#/components/schemas/application"
 
@@ -415,7 +455,7 @@ components:
        properties:
         id:
           type: string
-          description: Order id
+          description: Customer id
           example: "63b597c72e7e42972e5dec23"
 
     transaction:
