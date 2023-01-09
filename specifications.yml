@@ -116,7 +116,7 @@ paths:
     get:
       tags:
       - Application endpoints
-      summary: Get an application
+      summary: Get an order application
       description: Fetch an application
       parameters:
       - name: applicationId
@@ -155,33 +155,6 @@ paths:
       responses:
         200:
           $ref: "#/components/responses/orderGetSuccess"
-        400:
-          $ref: "#/components/responses/dataError"
-        401:
-          $ref: "#/components/responses/authError"
-        404:
-          $ref: "#/components/responses/notFoundError"
-        500:
-          $ref: "#/components/responses/serverError"
-      security:
-      - oAuth2ClientCredentials: []
-
-  /entity/{customerId}:
-    get:
-      tags:
-      - Customer endpoints
-      summary: Get a customer
-      description: Fetch a customer
-      parameters:
-      - name: customerId
-        in: path
-        description: Customer's id
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          $ref: "#/components/responses/customerGetSuccess"
         400:
           $ref: "#/components/responses/dataError"
         401:
