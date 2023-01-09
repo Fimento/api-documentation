@@ -24,7 +24,7 @@ paths:
       tags:
       - Application endpoints
       summary: Create Application
-      description: Send a new application to Fimento
+      description: Send a new application for an order to be created in the system, and run decision rules
       requestBody:
         $ref: "#/components/requestBodies/createOrderApplication"
       responses:
@@ -45,12 +45,12 @@ paths:
     put:
       tags:
       - Application endpoints
-      summary: Mark Application As Confirmed
-      description: This endpoint can be used to notify Fimento when the customer decides to confirm an application, so the decision process will continue.
+      summary: Confirm application
+      description: This endpoint can be used to notify Fimento when the customer decides to confirm an application and generate the order in Fimento system.
       parameters:
       - name: applicationId
         in: path
-        description: Application's id as set in the application response object
+        description: Application's id
         required: true
         schema: {}
       responses:
