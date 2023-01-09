@@ -29,7 +29,7 @@ paths:
         $ref: "#/components/requestBodies/createOrderApplication"
       responses:
         200:
-          $ref: "#/components/responses/orderApplication"
+          $ref: "#/components/responses/orderApplicationGetSuccess"
         400:
           $ref: "#/components/responses/dataError"
         401:
@@ -76,7 +76,7 @@ paths:
       parameters:
       - name: applicationId
         in: path
-        description: Application's id as set in the application response object
+        description: Application's id
         required: true
         schema:
           type: string
@@ -244,13 +244,6 @@ components:
             $ref: "#/components/schemas/orderApplication"
 
   responses:
-    orderApplication:
-      description: Successful operation
-      content:
-        application/json:
-         schema:
-            $ref: "#/components/schemas/orderApplicationSuccess"
-
     markAsConfirmedSuccess:
       description: Successful operation
 
@@ -361,17 +354,8 @@ components:
           description: Name of article
           example: Article
 
-    orderApplicationSuccess:
-      $ref: "#/components/schemas/application"
-
-
     orderApplicationGetSuccess:
-      type: object
-      required:
-      - application
-      properties:
-        application:
-          $ref: "#/components/schemas/application"
+      $ref: "#/components/schemas/application"
 
     orderGetSuccess:
       type: object
