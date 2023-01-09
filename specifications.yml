@@ -7,11 +7,11 @@ info:
 
     # Test objects
     Test objects can be used in the staging environment in order to test specific flows. If one of the organsiation of the application has its `organisationNumber` equal to one of the test object, the `applicationStatus` returned by Fimento for the create application endpoint will always be the same one as described in the following table:
-    Organisation Number|Application Status|Comment
-    ----------------------|------------------|-------
-    Undefined or anything but the below |`granted`|-
-    2222222 |`refer`|-
-    1111111 |`denied`|-
+    Organisation Number|Application Status
+    ----------------------|------------------
+    Undefined or anything but the below |`granted`
+    2222222 |`refer`
+    1111111 |`denied`
 servers:
 - url: https://api.fimento.com/
   description: Production server
