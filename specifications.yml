@@ -30,6 +30,14 @@ paths:
       responses:
         200:
           $ref: "#/components/responses/customerGetSuccess"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        404:
+          $ref: "#/components/responses/notFoundError"
+        500:
+          $ref: "#/components/responses/serverError"
       security:
         - oAuth2ClientCredentials: []
 
@@ -77,8 +85,6 @@ paths:
           $ref: "#/components/responses/authError"
         500:
           $ref: "#/components/responses/serverError"
-        503:
-          $ref: "#/components/responses/serviceError"
       security:
       - oAuth2ClientCredentials: []
 
@@ -103,8 +109,6 @@ paths:
           $ref: "#/components/responses/authError"
         500:
           $ref: "#/components/responses/serverError"
-        503:
-          $ref: "#/components/responses/serviceError"
       security:
       - oAuth2ClientCredentials: []
 
@@ -135,14 +139,14 @@ paths:
       security:
       - oAuth2ClientCredentials: []
 
-  /order/{accountId}:
+  /order/{orderId}:
     get:
       tags:
       - Order endpoints
       summary: Get an order
       description: Fetch an order
       parameters:
-      - name: accountId
+      - name: orderId
         in: path
         description: Order's id
         required: true
@@ -221,7 +225,7 @@ paths:
       security:
         - oAuth2ClientCredentials: []
 
-  /upload/payment-file/:
+  /upload/payment-file:
     post:
       tags:
       - Payments
@@ -283,13 +287,6 @@ components:
           schema:
             $ref: "#/components/schemas/customerGetSuccess"
 
-    empty:
-      description: Successful operation
-      content:
-        application/json:
-          schema:
-            type: object
-
     file:
       description: Binary file
       content:
@@ -325,13 +322,6 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/serverError"
-
-    serviceError:
-      description: Service Error. If the problem persists contact the technical support
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/serviceError"
 
   schemas:
     orderApplication:
@@ -396,10 +386,7 @@ components:
           description: The credit limit wished for this customer
           example: 20000
         currency:
-          type: string
-          format: ISO 4217
-          description: Currency of the credit limit and other amounts related to this customer
-          example: NOK
+          $ref: "#/components/schemas/currency"
 
     orderApplicationGetSuccess:
       $ref: "#/components/schemas/application"
@@ -627,12 +614,9 @@ components:
 
     currency:
       type: string
-      enum:
-        - NOK
-        - SEK
-        - EUR
-      default: EUR
-      description: Currency
+      format: ISO 4217
+      description: Currency of the credit limit and other amounts related to this customer
+      example: NOK
 
     decision:
       type: string
@@ -729,16 +713,6 @@ components:
               example: 500
             message:
               example: Internal Server Error
-
-    serviceError:
-      allOf:
-        - $ref: "#/components/schemas/error"
-        - type: object
-          properties:
-            status:
-              example: 503
-            message:
-              example: Service unavailable
 
   securitySchemes:
     oAuth2ClientCredentials:
