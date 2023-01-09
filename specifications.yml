@@ -54,7 +54,7 @@ paths:
         required: true
         schema: {}
       responses:
-        200:
+        204:
           $ref: "#/components/responses/markAsConfirmedSuccess"
         400:
           $ref: "#/components/responses/dataError"
@@ -253,10 +253,6 @@ components:
 
     markAsConfirmedSuccess:
       description: Successful operation
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/markAsConfirmedSuccess"
 
     orderApplicationGetSuccess:
       description: Successful operation
@@ -368,10 +364,6 @@ components:
     orderApplicationSuccess:
       $ref: "#/components/schemas/application"
 
-    markAsConfirmedSuccess:
-      type: string
-      description: Success message
-      example: ok
 
     orderApplicationGetSuccess:
       type: object
