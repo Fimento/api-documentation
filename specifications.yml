@@ -394,7 +394,7 @@ components:
       $ref: "#/components/schemas/order"
 
     customerGetSuccess:
-      $ref: "#/components/schemas/customer"
+      $ref: "#/components/schemas/application"
 
     paymentsSummary:
       type: object
@@ -543,55 +543,12 @@ components:
           type: string
           description: Application id
           example: "63b597c72e7e42972e5dec23"
-        createdAt:
-          type: string
-          description: Creation date of application
-          format: date
-          example: "2022-02-02"
-        applicationStep:
-          $ref: "#/components/schemas/applicationStep"
-        items:
-          type: array
-          items:
-            $ref: "#/components/schemas/item"
-        customerId:
-          type: string
-          description: Customer id
-          example: "63b597c72e7e42972e5nov23"
-        currency:
-          $ref: "#/components/schemas/currency"
         currentDecision:
           $ref: "#/components/schemas/decision"
         decisionReason:
           type: string
           description: Reason for the automatic or manual decision taken
           example: Awaiting processing
-        requestedTerms:
-          $ref: "#/components/schemas/terms"
-        terms:
-          $ref: "#/components/schemas/terms"
-
-    applicationStep:
-      type: string
-      enum:
-        - created
-        - approved
-        - accepted
-        - signed
-        - confirmed
-        - closed
-        - expired
-      default: created
-      description: |
-        Current status of an application.
-        Possible values are
-        * created -> application is created and waiting for automatic processing.
-        * approved -> application has passed the automatic rules.
-        * accepted -> application accepted by financer.
-        * signed -> application is signed by merchant.
-        * confirmed -> order is payed out.
-        * closed -> application is done.
-        * expired -> application is expired.
 
     transactionType:
       type: string
@@ -649,17 +606,6 @@ components:
         * granted -> application is granted and no manual review is necessary.
         * pending -> application has started the automatic processing.
         * new -> application is new and has not yet started the automatic processing.
-
-    terms:
-      type: object
-      properties:
-        termsOfPayment:
-          $ref: "#/components/schemas/termsOfPayment"
-
-    termsOfPayment:
-      type: number
-      description: Number of repayment days
-      example: 10
 
     error:
       type: object
