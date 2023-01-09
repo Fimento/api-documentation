@@ -342,40 +342,31 @@ components:
             $ref: "#/components/schemas/item"
         customerId:
           type: string
-          description: Id of customer
+          description: Id of customer making the purchase
           example: "63b597c72e7e42972e5dec43"
 
     item:
       type: object
       required:
       - price
-      - quanity
+      - quantity
       - assetName
       properties:
         price:
           type: number
-          description: Price of article
+          description: Total price for all the articles, including VAT
           example: 123
-        quanity:
+        quantity:
           type: number
-          description: Number of articles
+          description: Number of article(s)
           example: 2
-        assetName:
+        name:
           type: string
           description: Name of article
           example: Article
 
     orderApplicationSuccess:
-      type: object
-      required:
-      - status
-      - application
-      properties:
-        status:
-          type: integer
-          description: HTTP status code
-        application:
-          $ref: "#/components/schemas/application"
+      $ref: "#/components/schemas/application"
 
     markAsConfirmedSuccess:
       type: string
