@@ -112,7 +112,7 @@ paths:
     get:
       tags:
       - Application endpoints
-      summary: Get Application
+      summary: Get an application
       description: Fetch an application
       parameters:
       - name: applicationId
@@ -139,7 +139,7 @@ paths:
     get:
       tags:
       - Order endpoints
-      summary: Get Order
+      summary: Get an order
       description: Fetch an order
       parameters:
       - name: accountId
@@ -166,7 +166,7 @@ paths:
     get:
       tags:
       - Customer endpoints
-      summary: Get Customer
+      summary: Get a customer
       description: Fetch a customer
       parameters:
       - name: customerId
@@ -189,15 +189,21 @@ paths:
       security:
       - oAuth2ClientCredentials: []
 
-  /invoice/{invoiceId}/download:
+  /order/${orderId}/invoice/{invoiceId}/download:
     get:
       tags:
-      - Invoices
-      summary: Get Download Link For Invoice
+      - Order endpoints
+      summary: Get an invoice PDF
       parameters:
+      - name: orderId
+        in: path
+        description: Order's id
+        required: true
+        schema:
+          type: string
       - name: invoiceId
         in: path
-        description: Invoice id as set in the order response object
+        description: Invoice's id
         required: true
         schema:
           type: string
@@ -219,7 +225,7 @@ paths:
     post:
       tags:
       - Payments
-      summary: Register Payments
+      summary: Register payments
       responses:
         200:
           $ref: "#/components/responses/extendedApplication"
