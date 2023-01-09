@@ -213,7 +213,7 @@ paths:
           type: string
       responses:
         200:
-          $ref: "#/components/responses/extendedApplication"
+          $ref: "#/components/responses/file"
         400:
           $ref: "#/components/responses/dataError"
         401:
@@ -361,7 +361,7 @@ components:
       required:
       - price
       - quantity
-      - assetName
+      - name
       properties:
         price:
           type: number
@@ -381,7 +381,7 @@ components:
       required:
       - organisationNumber
       - country
-      - name
+      - alias
       - creditLimit
       - currency
       properties:
@@ -394,9 +394,9 @@ components:
           format: ISO 3166-1 alpha-2
           description: Country of the customer
           example: NO
-        name:
+        alias:
           type: string
-          description: Customer's name
+          description: Customer's name or alias
           example: A fancy customer
         creditLimit:
           type: number
@@ -466,11 +466,6 @@ components:
           type: number
           description: Total balance of order
           example: "10000"
-        createdAt:
-          type: string
-          description: Creation date of order
-          format: date
-          example: "2022-02-02"
         paymentReference:
           type: string
           description: Payment reference number of order to be used when paying order
@@ -680,13 +675,9 @@ components:
           $ref: "#/components/schemas/termsOfPayment"
 
     termsOfPayment:
-      type: string
-      enum:
-        - 30-days
-        - 60-days
-        - 90-days
-      default: 90-days
+      type: number
       description: Number of repayment days
+      example: 10
 
     error:
       type: object
