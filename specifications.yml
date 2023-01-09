@@ -7,11 +7,11 @@ info:
 
     # Test objects
     Test objects can be used in the staging environment in order to test specific flows. If one of the organsiation of the application has its `organisationNumber` equal to one of the test object, the `applicationStatus` returned by Fimento for the create application endpoint will always be the same one as described in the following table:
-    Organisation Number|Application Status|Comment
-    ----------------------|------------------|-------
-    Undefined or anything but the below |`granted`|-
-    2222222 |`refer`|-
-    1111111 |`denied`|-
+    Organisation Number|Application Status
+    ----------------------|------------------
+    Undefined or anything but the below |`granted`
+    2222222 |`refer`
+    1111111 |`denied`
 servers:
 - url: https://api.fimento.com/
   description: Production server
@@ -19,70 +19,17 @@ servers:
   description: Staging server
 
 paths:
-  /application/order:
+  /application/customer:
     post:
       tags:
       - Application endpoints
-      summary: Create Application
-      description: Send a new application to Fimento
+      summary: Create a customer
+      description: Create a customer and return its credit information
       requestBody:
-        $ref: "#/components/requestBodies/createOrderApplication"
+        $ref: "#/components/requestBodies/createCustomerApplication"
       responses:
         200:
-          $ref: "#/components/responses/orderApplication"
-        400:
-          $ref: "#/components/responses/dataError"
-        401:
-          $ref: "#/components/responses/authError"
-        500:
-          $ref: "#/components/responses/serverError"
-        503:
-          $ref: "#/components/responses/serviceError"
-      security:
-      - oAuth2ClientCredentials: []
-
-  /application/order/{applicationId}/mark-as-confirmed:
-    put:
-      tags:
-      - Application endpoints
-      summary: Mark Application As Confirmed
-      description: This endpoint can be used to notify Fimento when the customer decides to confirm an application, so the decision process will continue.
-      parameters:
-      - name: applicationId
-        in: path
-        description: Application's id as set in the application response object
-        required: true
-        schema: {}
-      responses:
-        200:
-          $ref: "#/components/responses/markAsConfirmedSuccess"
-        400:
-          $ref: "#/components/responses/dataError"
-        401:
-          $ref: "#/components/responses/authError"
-        500:
-          $ref: "#/components/responses/serverError"
-        503:
-          $ref: "#/components/responses/serviceError"
-      security:
-      - oAuth2ClientCredentials: []
-
-  /application/order/{applicationId}:
-    get:
-      tags:
-      - Application endpoints
-      summary: Get Application
-      description: Fetch an application
-      parameters:
-      - name: applicationId
-        in: path
-        description: Application's id as set in the application response object
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          $ref: "#/components/responses/orderApplicationGetSuccess"
+          $ref: "#/components/responses/customerGetSuccess"
         400:
           $ref: "#/components/responses/dataError"
         401:
@@ -92,45 +39,18 @@ paths:
         500:
           $ref: "#/components/responses/serverError"
       security:
-      - oAuth2ClientCredentials: []
+        - oAuth2ClientCredentials: []
 
-  /order/{accountId}:
+  /application/customer/{customerApplicationId}:
     get:
       tags:
-      - Order endpoints
-      summary: Get Order
-      description: Fetch an order
+      - Application endpoints
+      summary: Get a customer application
+      description: Fetch a customer application
       parameters:
-      - name: accountId
+      - name: customerApplicationId
         in: path
-        description: Account's id as set in the account response object
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          $ref: "#/components/responses/orderGetSuccess"
-        400:
-          $ref: "#/components/responses/dataError"
-        401:
-          $ref: "#/components/responses/authError"
-        404:
-          $ref: "#/components/responses/notFoundError"
-        500:
-          $ref: "#/components/responses/serverError"
-      security:
-      - oAuth2ClientCredentials: []
-
-  /entity/{customerId}:
-    get:
-      tags:
-      - Customer endpoints
-      summary: Get Customer
-      description: Fetch a customer
-      parameters:
-      - name: customerId
-        in: path
-        description: Customer's details id as set in the customer response object
+        description: Customer application's id as set in the customer application response object
         required: true
         schema:
           type: string
@@ -148,35 +68,66 @@ paths:
       security:
       - oAuth2ClientCredentials: []
 
-  /customer-application:
+  /application/order:
     post:
       tags:
-      - Customer application endpoints
-      summary: Create a customer and apply for credit limit
+      - Application endpoints
+      summary: Create an order application
+      description: Send a new application for an order to be created in the system, and run decision rules
       requestBody:
-        $ref: "#/components/requestBodies/customerApplication"
+        $ref: "#/components/requestBodies/createOrderApplication"
       responses:
         200:
-          $ref: "#/components/responses/extendedApplication"
+          $ref: "#/components/responses/orderApplicationGetSuccess"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        500:
+          $ref: "#/components/responses/serverError"
       security:
-        - oAuth2ClientCredentials: []
+      - oAuth2ClientCredentials: []
 
-  /customer-application/{customerApplicationId}:
+  /application/order/{applicationId}/mark-as-confirmed:
+    put:
+      tags:
+      - Application endpoints
+      summary: Confirm an order application
+      description: This endpoint can be used to notify Fimento when the customer decides to confirm an application and generate the order in Fimento system.
+      parameters:
+      - name: applicationId
+        in: path
+        description: Application's id
+        required: true
+        schema: {}
+      responses:
+        200:
+          $ref: "#/components/responses/markAsConfirmedSuccess"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+      - oAuth2ClientCredentials: []
+
+  /application/order/{applicationId}:
     get:
       tags:
-      - Customer application endpoints
-      summary: Get Customer Application
-      description: Fetch a customer application
+      - Application endpoints
+      summary: Get an order application
+      description: Fetch an application
       parameters:
-      - name: customerApplicationId
+      - name: applicationId
         in: path
-        description: Customer application's id as set in the customer application response object
+        description: Application's id
         required: true
         schema:
           type: string
       responses:
         200:
-          $ref: "#/components/responses/extendedApplication"
+          $ref: "#/components/responses/orderApplicationGetSuccess"
         400:
           $ref: "#/components/responses/dataError"
         401:
@@ -188,21 +139,54 @@ paths:
       security:
       - oAuth2ClientCredentials: []
 
-  /invoice/{invoiceId}/download:
+  /order/{orderId}:
     get:
       tags:
-      - Invoices
-      summary: Get Download Link For Invoice
+      - Order endpoints
+      summary: Get an order
+      description: Fetch an order
       parameters:
-      - name: invoiceId
+      - name: orderId
         in: path
-        description: Invoice id as set in the order response object
+        description: Order's id
         required: true
         schema:
           type: string
       responses:
         200:
-          $ref: "#/components/responses/extendedApplication"
+          $ref: "#/components/responses/orderGetSuccess"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        404:
+          $ref: "#/components/responses/notFoundError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+      - oAuth2ClientCredentials: []
+
+  /order/${orderId}/invoice/{invoiceId}/download:
+    get:
+      tags:
+      - Order endpoints
+      summary: Get an invoice PDF
+      parameters:
+      - name: orderId
+        in: path
+        description: Order's id
+        required: true
+        schema:
+          type: string
+      - name: invoiceId
+        in: path
+        description: Invoice's id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: "#/components/responses/file"
         400:
           $ref: "#/components/responses/dataError"
         401:
@@ -214,14 +198,16 @@ paths:
       security:
         - oAuth2ClientCredentials: []
 
-  /upload/payment-file/:
+  /upload/payment-file:
     post:
       tags:
       - Payments
-      summary: Register Payments
+      summary: Register payments
+      requestBody:
+        $ref: "#/components/requestBodies/registerPayments"
       responses:
         200:
-          $ref: "#/components/responses/extendedApplication"
+          $ref: "#/components/responses/paymentsRegistrationSummary"
         400:
           $ref: "#/components/responses/dataError"
         401:
@@ -243,20 +229,35 @@ components:
           schema:
             $ref: "#/components/schemas/orderApplication"
 
-  responses:
-    orderApplication:
-      description: Successful operation
+    createCustomerApplication:
+      required: true
+      description: New customer Data
       content:
         application/json:
-         schema:
-            $ref: "#/components/schemas/orderApplicationSuccess"
+          schema:
+            $ref: "#/components/schemas/customerApplication"
 
+    registerPayments:
+      required: true
+      description: A file containing payments from one or several customers. An example of the file format can be provided on demand
+      content:
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary
+
+  responses:
     markAsConfirmedSuccess:
       description: Successful operation
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/markAsConfirmedSuccess"
+            type: object
+            properties:
+              orderId:
+                type: string
+                description: The new order Id
+                example: 'AFancyId'
 
     orderApplicationGetSuccess:
       description: Successful operation
@@ -279,13 +280,12 @@ components:
           schema:
             $ref: "#/components/schemas/customerGetSuccess"
 
-    empty:
+    paymentsRegistrationSummary:
       description: Successful operation
       content:
         application/json:
           schema:
-            type: object
-
+            $ref: "#/components/schemas/paymentsSummary"
     file:
       description: Binary file
       content:
@@ -322,13 +322,6 @@ components:
           schema:
             $ref: "#/components/schemas/serverError"
 
-    serviceError:
-      description: Service Error. If the problem persists contact the technical support
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/serviceError"
-
   schemas:
     orderApplication:
       type: object
@@ -342,61 +335,86 @@ components:
             $ref: "#/components/schemas/item"
         customerId:
           type: string
-          description: Id of customer
+          description: Id of customer making the purchase
           example: "63b597c72e7e42972e5dec43"
 
     item:
       type: object
       required:
       - price
-      - quanity
-      - assetName
+      - quantity
+      - name
       properties:
         price:
           type: number
-          description: Price of article
+          description: Total price for all the articles, including VAT
           example: 123
-        quanity:
+        quantity:
           type: number
-          description: Number of articles
+          description: Number of article(s)
           example: 2
-        assetName:
+        name:
           type: string
           description: Name of article
           example: Article
 
-    orderApplicationSuccess:
+    customerApplication:
       type: object
       required:
-      - status
-      - application
+      - organisationNumber
+      - country
+      - alias
+      - creditLimit
+      - currency
       properties:
-        status:
-          type: integer
-          description: HTTP status code
-        application:
-          $ref: "#/components/schemas/application"
-
-    markAsConfirmedSuccess:
-      type: string
-      description: Success message
-      example: ok
+        organisationNumber:
+          type: string
+          description: National identifier of the customer
+          example: "5566778899"
+        country:
+          type: string
+          format: ISO 3166-1 alpha-2
+          description: Country of the customer
+          example: NO
+        alias:
+          type: string
+          description: Customer's name or alias
+          example: A fancy customer
+        creditLimit:
+          type: number
+          description: The credit limit wished for this customer
+          example: 20000
+        currency:
+          $ref: "#/components/schemas/currency"
 
     orderApplicationGetSuccess:
-      type: object
-      required:
-      - application
-      properties:
-        application:
-          $ref: "#/components/schemas/application"
+      $ref: "#/components/schemas/application"
 
     orderGetSuccess:
+      $ref: "#/components/schemas/order"
+
+    customerGetSuccess:
+      $ref: "#/components/schemas/application"
+
+    paymentsSummary:
       type: object
-      required:
-      - order
       properties:
-        order:
-          $ref: "#/components/schemas/order"
+        success:
+          type: array
+          items:
+            type: string
+        info:
+          type: array
+          items:
+            type: string
+        warning:
+          type: array
+          items:
+            type: string
+        error:
+          type: array
+          items:
+            type: string
 
     order:
       type: object
@@ -430,11 +448,6 @@ components:
           type: number
           description: Total balance of order
           example: "10000"
-        createdAt:
-          type: string
-          description: Creation date of order
-          format: date
-          example: "2022-02-02"
         paymentReference:
           type: string
           description: Payment reference number of order to be used when paying order
@@ -443,6 +456,14 @@ components:
           type: number
           description: Number of days the order is passed its due date
           example: "50"
+
+    customer:
+       type: object
+       properties:
+        id:
+          type: string
+          description: Customer id
+          example: "63b597c72e7e42972e5dec23"
 
     transaction:
       type: object
@@ -522,55 +543,12 @@ components:
           type: string
           description: Application id
           example: "63b597c72e7e42972e5dec23"
-        createdAt:
-          type: string
-          description: Creation date of application
-          format: date
-          example: "2022-02-02"
-        applicationStep:
-          $ref: "#/components/schemas/applicationStep"
-        items:
-          type: array
-          items:
-            $ref: "#/components/schemas/item"
-        customerId:
-          type: string
-          description: Customer id
-          example: "63b597c72e7e42972e5nov23"
-        currency:
-          $ref: "#/components/schemas/currency"
         currentDecision:
           $ref: "#/components/schemas/decision"
         decisionReason:
           type: string
           description: Reason for the automatic or manual decision taken
           example: Awaiting processing
-        requestedTerms:
-          $ref: "#/components/schemas/terms"
-        terms:
-          $ref: "#/components/schemas/terms"
-
-    applicationStep:
-      type: string
-      enum:
-        - created
-        - approved
-        - accepted
-        - signed
-        - confirmed
-        - closed
-        - expired
-      default: created
-      description: |
-        Current status of an application.
-        Possible values are
-        * created -> application is created and waiting for automatic processing.
-        * approved -> application has passed the automatic rules.
-        * accepted -> application accepted by financer.
-        * signed -> application is signed by merchant.
-        * confirmed -> order is payed out.
-        * closed -> application is done.
-        * expired -> application is expired.
 
     transactionType:
       type: string
@@ -607,12 +585,9 @@ components:
 
     currency:
       type: string
-      enum:
-        - NOK
-        - SEK
-        - EUR
-      default: EUR
-      description: Currency
+      format: ISO 4217
+      description: Currency of the credit limit and other amounts related to this customer
+      example: NOK
 
     decision:
       type: string
@@ -631,21 +606,6 @@ components:
         * granted -> application is granted and no manual review is necessary.
         * pending -> application has started the automatic processing.
         * new -> application is new and has not yet started the automatic processing.
-
-    terms:
-      type: object
-      properties:
-        termsOfPayment:
-          $ref: "#/components/schemas/termsOfPayment"
-
-    termsOfPayment:
-      type: string
-      enum:
-        - 30-days
-        - 60-days
-        - 90-days
-      default: 90-days
-      description: Number of repayment days
 
     error:
       type: object
@@ -709,16 +669,6 @@ components:
               example: 500
             message:
               example: Internal Server Error
-
-    serviceError:
-      allOf:
-        - $ref: "#/components/schemas/error"
-        - type: object
-          properties:
-            status:
-              example: 503
-            message:
-              example: Service unavailable
 
   securitySchemes:
     oAuth2ClientCredentials:
