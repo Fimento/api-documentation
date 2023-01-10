@@ -101,6 +101,8 @@ paths:
         required: true
         schema:
           type: string
+      requestBody:
+        $ref: "#/components/requestBodies/confirmOrder"
       responses:
         200:
           $ref: "#/components/responses/markAsConfirmedSuccess"
@@ -246,6 +248,17 @@ components:
           schema:
             type: string
             format: binary
+
+    confirmOrder:
+      required: true
+      description: Data to finalise order
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: "#/components/schemas/singleInvoicePaymentMethod"
+              - $ref: "#/components/schemas/instalmentPaymentMethod"
+
 
   responses:
     markAsConfirmedSuccess:
@@ -395,6 +408,18 @@ components:
           type: string
           description: Application id
           example: "63b597c72e7e42972e5dec23"
+        availablePaymentMethods:
+          type: array
+          items:
+            type: string
+            enum:
+              - single-invoice
+              - instalments
+            description: |
+              Type of payment methods available for that order.
+              Possible values are
+              * single-invoice -> The order total amount will be invoiced all at once.
+              * instalments -> The order will be recuringly invoiced over a period of time
         decisionData:
           $ref: "#/components/schemas/decisionData"
 
@@ -439,6 +464,33 @@ components:
           type: array
           items:
             type: string
+
+    singleInvoicePaymentMethod:
+      type: object
+      required:
+        - paymentMethod
+      properties:
+        paymentMethod:
+          type: string
+          enum:
+          - single-invoice
+
+    instalmentPaymentMethod:
+      type: object
+      required:
+        - paymentMethod
+        - period
+      properties:
+        paymentMethod:
+          type: string
+          enum:
+          - instalment
+        period:
+          type: number
+          description: Number of months on which the order amount will be spread
+          example: 12
+
+
 
     order:
       type: object
