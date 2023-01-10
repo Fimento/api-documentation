@@ -41,16 +41,16 @@ paths:
       security:
         - oAuth2ClientCredentials: []
 
-  /application/customer/{customerApplicationId}:
+  /application/customer/{applicationId}:
     get:
       tags:
       - Application endpoints
-      summary: Get a customer application
-      description: Fetch a customer application
+      summary: Get a customer
+      description: Fetch a customer
       parameters:
-      - name: customerApplicationId
+      - name: applicationId
         in: path
-        description: Customer application's id as set in the customer application response object
+        description: Application's id
         required: true
         schema:
           type: string
@@ -388,13 +388,36 @@ components:
           $ref: "#/components/schemas/currency"
 
     orderApplicationGetSuccess:
-      $ref: "#/components/schemas/application"
+      type: object
+      properties:
+        id:
+          type: string
+          description: Application id
+          example: "63b597c72e7e42972e5dec23"
+        decisionData:
+          $ref: "#/components/schemas/decisionData"
 
     orderGetSuccess:
       $ref: "#/components/schemas/order"
 
     customerGetSuccess:
-      $ref: "#/components/schemas/application"
+      type: object
+      properties:
+        id:
+          type: string
+          description: Application id
+          example: "63b597c72e7e42972e5dec23"
+        customerId:
+          type: string
+          description: Customer Id
+          example: 63b597c72e7e42972e5dec23
+        creditLimit:
+          type: number
+          description: Credit limit for this customer set by the system after running credit rules
+          example: 20000
+        decisionData:
+          $ref: "#/components/schemas/decisionData"
+
 
     paymentsSummary:
       type: object
@@ -536,19 +559,18 @@ components:
           format: date
           example: "2022-04-07"
 
-    application:
+    decisionData:
       type: object
       properties:
-        id:
-          type: string
-          description: Application id
-          example: "63b597c72e7e42972e5dec23"
-        currentDecision:
+        finalDecision:
           $ref: "#/components/schemas/decision"
-        decisionReason:
-          type: string
-          description: Reason for the automatic or manual decision taken
-          example: Awaiting processing
+        decisionDetails:
+          type: array
+          description: List of descriptions that lead the engine to the final decision
+          items:
+            type: string
+            description: Description
+            example: Automatic grant
 
     transactionType:
       type: string
