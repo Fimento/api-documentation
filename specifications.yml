@@ -6,7 +6,7 @@ info:
     The Fimento Open API can be used by Fimento's partners in order to provide financial products to their end customers within their own application/website.
 
     # Test objects
-    Test objects can be used in the staging environment in order to test specific flows. If one of the organsiation of the application has its `organisationNumber` equal to one of the test object, the `applicationStatus` returned by Fimento for the create application endpoint will always be the same one as described in the following table:
+    Test objects can be used in the staging environment in order to test specific flows. If one of the organisations of the application has its `organisationNumber` equal to one of the test objects, the `applicationStatus` returned by Fimento for the create application endpoint will always be the same one as described in the following table:
     Organisation Number|Application Status
     ----------------------|------------------
     Undefined or anything but the below |`granted`
@@ -99,7 +99,8 @@ paths:
         in: path
         description: Application's id
         required: true
-        schema: {}
+        schema:
+          type: string
       responses:
         200:
           $ref: "#/components/responses/markAsConfirmedSuccess"
@@ -462,9 +463,9 @@ components:
           type: string
           description: Reference number of order
           example: "234578169728"
-        isAccountPaid:
+        isPaid:
           type: boolean
-          description: Status of if all invoices of order are paid or not
+          description: Whether or not the order has been fully paid
         currency:
           $ref: "#/components/schemas/currency"
         orderAmount:
@@ -586,7 +587,7 @@ components:
         Possible values are
         * fee -> the transaction is a fee.
         * payOut -> the transaction is a payment to a customer.
-        * interst -> the transaction is capitalised interest.
+        * interest -> the transaction is capitalised interest.
         * payIn -> the transaction is a payment from a customer.
         * adjustment -> the transaction is an adjustment done by the system.
         * internal -> the transaction is an internal transaction within the system between two accounts.
