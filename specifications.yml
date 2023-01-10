@@ -271,7 +271,7 @@ components:
               orderId:
                 type: string
                 description: The new order Id
-                example: 'AFancyId'
+                example: '63b597c72e7e42972e5dec23'
 
     orderApplicationGetSuccess:
       description: Successful operation
