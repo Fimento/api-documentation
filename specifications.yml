@@ -619,7 +619,6 @@ components:
         - denied
         - pending
         - new
-      default: pending
       description: |
         Current decision of an application.
         Possible values are
