@@ -351,6 +351,8 @@ components:
           type: string
           description: Id of customer making the purchase
           example: "63b597c72e7e42972e5dec43"
+        currency:
+          $ref: "#/components/schemas/currency"
 
     item:
       type: object
