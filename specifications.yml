@@ -358,19 +358,29 @@ components:
       - price
       - quantity
       - name
+      - vatPercentage
+      - unit
       properties:
         price:
           type: number
-          description: Total price for all the articles, including VAT
+          description: Total price for all the items, including VAT
           example: 123
         quantity:
           type: number
-          description: Number of article(s)
+          description: Number of item(s)
           example: 2
+        unit:
+          type: string
+          description: Unit for the quantity of the item.
+          example: kg
         name:
           type: string
-          description: Name of article
+          description: Name of item
           example: Article
+        vatPercentage:
+          type: number
+          description: Percentage of VAT applied on the item
+          example: 25
 
     customerApplication:
       type: object
@@ -378,6 +388,7 @@ components:
       - organisationNumber
       - country
       - alias
+      - name
       - creditLimit
       - currency
       properties:
@@ -390,9 +401,13 @@ components:
           format: ISO 3166-1 alpha-2
           description: Country of the customer
           example: NO
+        name:
+          type: string
+          description: Customer's name
+          example: A fancy customer HIFI Electronics AB
         alias:
           type: string
-          description: Customer's name or alias
+          description: Customer's alias for a different nomination than the official one for the customer
           example: A fancy customer
         creditLimit:
           type: number
@@ -411,15 +426,26 @@ components:
         availablePaymentMethods:
           type: array
           items:
-            type: string
-            enum:
-              - single-invoice
-              - instalments
-            description: |
-              Type of payment methods available for that order.
-              Possible values are
-              * single-invoice -> The order total amount will be invoiced all at once.
-              * instalments -> The order will be recuringly invoiced over a period of time
+            type: object
+            required:
+              - type
+            properties:
+              type:
+                type: string
+                enum:
+                  - single-invoice
+                  - instalments
+                description: |
+                  Type of payment methods available for that order.
+                  Possible values are
+                  * single-invoice -> The order total amount will be invoiced all at once.
+                  * instalments -> The order will be recuringly invoiced over a period of time
+              repaymentPeriods:
+                type: array
+                description: Available repayment period for this payment method
+                example: [6, 12, 18]
+                items:
+                  type: number
         decisionData:
           $ref: "#/components/schemas/decisionData"
 
@@ -490,8 +516,6 @@ components:
           description: Number of months on which the order amount will be spread
           example: 12
 
-
-
     order:
       type: object
       properties:
@@ -522,7 +546,7 @@ components:
           $ref: "#/components/schemas/currency"
         orderAmount:
           type: number
-          description: Total balance of order
+          description: Total amount of the order
           example: "10000"
         paymentReference:
           type: string
