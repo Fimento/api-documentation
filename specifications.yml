@@ -88,7 +88,7 @@ paths:
       security:
       - oAuth2ClientCredentials: []
 
-  /application/order/{applicationId}/mark-as-confirmed:
+  /application/order/{applicationId}/confirm:
     put:
       tags:
       - Application endpoints
