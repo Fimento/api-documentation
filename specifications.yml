@@ -88,7 +88,7 @@ paths:
       security:
       - oAuth2ClientCredentials: []
 
-  /application/order/{applicationId}/mark-as-confirmed:
+  /application/order/{applicationId}/confirm:
     put:
       tags:
       - Application endpoints
@@ -351,6 +351,12 @@ components:
           type: string
           description: Id of customer making the purchase
           example: "63b597c72e7e42972e5dec43"
+        currency:
+          $ref: "#/components/schemas/currency"
+        reference:
+          type: string
+          description: Unique reference/identifier for the order that is communicated to the customer
+          example: 'A fancy reference'
 
     item:
       type: object
