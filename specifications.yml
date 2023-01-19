@@ -641,6 +641,10 @@ components:
           description: Date invoice was sent to customer
           format: date
           example: "2022-04-07"
+        status:
+          type: string
+          description: Invoice status
+          example: "waiting-for-payment"
 
     decisionData:
       type: object
