@@ -642,9 +642,7 @@ components:
           format: date
           example: "2022-04-07"
         status:
-          type: string
-          description: Invoice status
-          example: "waiting-for-payment"
+          $ref: "#/components/schemas/invoiceStatus"
 
     decisionData:
       type: object
@@ -658,6 +656,21 @@ components:
             type: string
             description: Description
             example: Automatic grant
+
+    invoiceStatus:
+      type: string
+      enum:
+        - paid
+        - waiting-for-payment
+        - not-invoiced
+        - late
+      description: |
+        Invoice status.
+        Possible values are
+        * paid -> the invoice is fully paid
+        * waiting-for-payment -> the invoice is sent, is not late and not fully paid
+        * not-invoiced -> the invoice has not been sent to the customer
+        * late -> the invoice is late
 
     transactionType:
       type: string
