@@ -343,7 +343,7 @@ components:
       - currency
       - reference
       properties:
-        items:W
+        items:
           type: array
           items:
             $ref: "#/components/schemas/item"
