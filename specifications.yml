@@ -342,6 +342,8 @@ components:
       required:
       - items
       - customerId
+      - currency
+      - reference
       properties:
         items:
           type: array
