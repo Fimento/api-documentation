@@ -34,8 +34,6 @@ paths:
           $ref: "#/components/responses/dataError"
         401:
           $ref: "#/components/responses/authError"
-        404:
-          $ref: "#/components/responses/notFoundError"
         500:
           $ref: "#/components/responses/serverError"
       security:
@@ -345,7 +343,7 @@ components:
       - currency
       - reference
       properties:
-        items:
+        items:W
           type: array
           items:
             $ref: "#/components/schemas/item"
@@ -764,7 +762,7 @@ components:
             status:
               example: 404
             message:
-              example: Application not found
+              example: Not found
 
     serverError:
       allOf:
