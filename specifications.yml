@@ -167,6 +167,38 @@ paths:
       security:
       - oAuth2ClientCredentials: []
 
+  /order/${orderId}/invoice/{invoiceId}/reminder:
+    post:
+      tags:
+      - Order endpoints
+      summary: Create an invoice reminder
+      parameters:
+      - name: orderId
+        in: path
+        description: Order's id
+        required: true
+        schema:
+          type: string
+      - name: invoiceId
+        in: path
+        description: Invoice's id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: "Operation Successful"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        404:
+          $ref: "#/components/responses/notFoundError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+        - oAuth2ClientCredentials: []
+
   /order/${orderId}/invoice/{invoiceId}/download:
     get:
       tags:
