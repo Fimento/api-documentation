@@ -643,6 +643,50 @@ components:
           example: "2022-04-07"
         status:
           $ref: "#/components/schemas/invoiceStatus"
+        dunning:
+          type: array
+          description: "Array of invoice remnders"
+          items:
+            $ref: "#/components/schemas/dunning"
+
+    dunning:
+      type: object
+      properties:
+        fee:
+          type: object
+          properties:
+            transactioIds:
+              type: array
+              description: "Array of transactions related to fee"
+              items:
+                type: string
+                example: "63da375f0043292df2fd2982"
+            amount:
+              type: number
+              description: "Reminder fee amount"
+              example: 60
+        "_id":
+          type: string
+          example: "63da37e01a786fc1b70ed884"
+        referenceNumber:
+          type: string
+          description: "Reminder invoice reference number"
+          example: "8836434332"
+        issueDate:
+          type: string
+          description: "Reminder expiry date"
+          format: date
+          example: "2022-04-08"
+        expiryDate:
+          type: string
+          description: "Reminder issue date"
+          format: date
+          example: "2022-04-22"
+        endGracePeriod:
+          type: string
+          description: "Reminder end grace period date"
+          format: date
+          example: "2022-04-27"
 
     decisionData:
       type: object
