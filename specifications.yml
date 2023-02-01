@@ -220,6 +220,33 @@ paths:
       security:
         - oAuth2ClientCredentials: []
 
+  /order/:orderId/payment-plan:
+    get:
+      tags:
+      - Order endpoints
+      summary: Get payment plan of order
+      description: Get upcoming invoices
+      parameters:
+      - name: orderId
+        in: path
+        description: Order's id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: "#/components/responses/paymentPlanGetSuccess"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        404:
+          $ref: "#/components/responses/notFoundError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+      - oAuth2ClientCredentials: []
+
 components:
   requestBodies:
     createOrderApplication:
@@ -298,6 +325,14 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/paymentsSummary"
+
+    paymentPlanGetSuccess:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/paymentPlanGetSuccess"
+
     file:
       description: Binary file
       content:
@@ -457,6 +492,11 @@ components:
 
     orderGetSuccess:
       $ref: "#/components/schemas/order"
+
+    paymentPlanGetSuccess:
+      type: array
+      items:
+        $ref: "#/components/schemas/paymentPlanInvoice"
 
     customerGetSuccess:
       type: object
@@ -643,6 +683,29 @@ components:
           example: "2022-04-07"
         status:
           $ref: "#/components/schemas/invoiceStatus"
+
+    paymentPlanInvoice:
+      type: object
+      properties:
+        amount:
+          type: number
+          description: Amount of invoice
+          example: "10000"
+        issueDate:
+          type: string
+          description: Issue date of invoice
+          format: date
+          example: "2022-02-02"
+        expiryDate:
+          type: string
+          description: Expiry date of invoice
+          format: date
+          example: "2022-04-02"
+        endGracePeriod:
+          type: string
+          description: Grace period of invoice
+          format: date
+          example: "2022-04-07"
 
     decisionData:
       type: object
