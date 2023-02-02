@@ -645,7 +645,7 @@ components:
           $ref: "#/components/schemas/invoiceStatus"
         dunning:
           type: array
-          description: "Array of invoice remnders"
+          description: "List of reminders and fees in case of late payment of the invoice"
           items:
             $ref: "#/components/schemas/dunning"
 
@@ -657,7 +657,7 @@ components:
           properties:
             transactioIds:
               type: array
-              description: "Array of transactions related to fee"
+              description: "Transactions leading to the fee amount"
               items:
                 type: string
                 example: "63da375f0043292df2fd2982"
@@ -668,10 +668,6 @@ components:
         "_id":
           type: string
           example: "63da37e01a786fc1b70ed884"
-        referenceNumber:
-          type: string
-          description: "Reminder invoice reference number"
-          example: "8836434332"
         issueDate:
           type: string
           description: "Reminder expiry date"
