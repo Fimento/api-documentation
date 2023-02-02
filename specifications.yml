@@ -187,7 +187,7 @@ paths:
           type: string
       responses:
         200:
-          description: "Operation Successful"
+          $ref: "#/components/responses/generateReminderSuccess"
         400:
           $ref: "#/components/responses/dataError"
         401:
@@ -329,6 +329,14 @@ components:
                 type: string
                 description: The new order Id
                 example: '63b597c72e7e42972e5dec23'
+
+    generateReminderSuccess:
+      description: Sucessful operation
+      content:
+        schema:
+          type: string
+          description: The new reminder Id
+          example: "63b597c72e7e42972e5dec23"
 
     orderApplicationGetSuccess:
       description: Successful operation
