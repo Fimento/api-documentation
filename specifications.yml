@@ -584,6 +584,7 @@ components:
       required:
         - paymentMethod
         - period
+        - nominalRate
       properties:
         paymentMethod:
           type: string
@@ -593,6 +594,10 @@ components:
           type: number
           description: Number of months on which the order amount will be spread
           example: 12
+        nominalRate:
+          type: number
+          description: Nominal rate to apply for the interests calculations. Should be a percentage.
+          example: 10
 
     order:
       type: object
