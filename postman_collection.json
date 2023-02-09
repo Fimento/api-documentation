@@ -1,0 +1,445 @@
+{
+	"info": {
+		"_postman_id": "a61c43c4-fd7d-44e6-b2e8-f81d14f01777",
+		"name": "Partner API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14190635"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"UNAME\",\r\n    \"password\": \"PWORD\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ENV}}/authorization/authenticate",
+					"host": [
+						"{{ENV}}"
+					],
+					"path": [
+						"authorization",
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.collectionVariables.set(\"CUSTOMER_ID\", jsonData.customerId);",
+							"pm.collectionVariables.set(\"CUSTOMER_APPLICATION_ID\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"vatNumber\": \"\",\r\n    \"organisationNumber\": \"Organisation number\",\r\n    \"alias\": \"Alias\",\r\n    \"country\": \"SE\",\r\n    \"creditLimit\": 5500,\r\n    \"currency\": \"SEK\",\r\n    \"contactEmail\": \"customer@email1.com\",\r\n    \"invoiceEmail\": \"customer@email2.com\",\r\n    \"phone\": \"+46701234567\",\r\n    \"name\": \"company\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ENV}}/application/customer",
+					"host": [
+						"{{ENV}}"
+					],
+					"path": [
+						"application",
+						"customer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a customer",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{ENV}}/application/customer/{{CUSTOMER_APPLICATION_ID}}",
+					"host": [
+						"{{ENV}}"
+					],
+					"path": [
+						"application",
+						"customer",
+						"{{CUSTOMER_APPLICATION_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create an order application",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.collectionVariables.set(\"ORDER_APPLICATION\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"items\": [{\r\n        \"price\": 123,\r\n        \"quantity\": 1,\r\n        \"name\": \"asset\",\r\n        \"unit\": \"antal\",\r\n        \"vatPercentage\": 25\r\n    }],\r\n    \"reference\": \"Order reference number\",\r\n    \"currency\": \"SEK\",\r\n    \"customerId\": \"{{CUSTOMER_ID}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ENV}}/application/order",
+					"host": [
+						"{{ENV}}"
+					],
+					"path": [
+						"application",
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get an order application",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{ENV}}/application/order/{{ORDER_APPLICATION}}",
+					"host": [
+						"{{ENV}}"
+					],
+					"path": [
+						"application",
+						"order",
+						"{{ORDER_APPLICATION}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm an order application",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.collectionVariables.set(\"ORDER_ID\", jsonData.orderId);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"paymentMethod\": \"instalment\",\r\n    \"period\": 30\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ENV}}/application/order/{{ORDER_APPLICATION}}/confirm",
+					"host": [
+						"{{ENV}}"
+					],
+					"path": [
+						"application",
+						"order",
+						"{{ORDER_APPLICATION}}",
+						"confirm"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get an order",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{ENV}}/order/{{ORDER_ID}}",
+					"host": [
+						"{{ENV}}"
+					],
+					"path": [
+						"order",
+						"{{ORDER_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get payment plan",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{ENV}}/order/{{ORDER_ID}}/payment-plan",
+					"host": [
+						"{{ENV}}"
+					],
+					"path": [
+						"order",
+						"{{ORDER_ID}}",
+						"payment-plan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register payments",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "/home/erik/Downloads/PAYMENT_FILE.xlsx"
+					}
+				},
+				"url": {
+					"raw": "{{ENV}}/upload/payment-file",
+					"host": [
+						"{{ENV}}"
+					],
+					"path": [
+						"upload",
+						"payment-file"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a return",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"revertedItems\": [{\n        \"articleId\": \"63e223067184140552c6b3b2\",\n        \"quantity\": 1,\n        \"amount\": 123,\n        \"description\": \"asset\"\n    }, {\n        \"articleId\": \"63e223067184140552c6b3b3\",\n        \"quantity\": 1,\n        \"amount\": 100,\n        \"description\": \"asset2\"\n    }, {\n        \"articleId\": \"63e223067184140552c6b3b4\",\n        \"quantity\": 1,\n        \"amount\": 250,\n        \"description\": \"asset3\"\n    }],\n    \"message\": \"Broken\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ENV}}/order/{{ORDER_ID}}/credit-note",
+					"host": [
+						"{{ENV}}"
+					],
+					"path": [
+						"order",
+						"{{ORDER_ID}}",
+						"credit-note"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get an invoice PDF",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ENV}}/order/{{ORDER_ID}}/invoice/63e4fb860933e600f50123fa",
+					"host": [
+						"{{ENV}}"
+					],
+					"path": [
+						"order",
+						"{{ORDER_ID}}",
+						"invoice",
+						"63e4fb860933e600f50123fa"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create an invoice reminder",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"feeAmount\": 60,\n    \"termsOfPayment\": 30,\n    \"reminderType\": \"reminder\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ENV}}/order/{{ORDER_ID}}/invoice/63e4fb860933e600f50123fa/reminder",
+					"host": [
+						"{{ENV}}"
+					],
+					"path": [
+						"order",
+						"{{ORDER_ID}}",
+						"invoice",
+						"63e4fb860933e600f50123fa",
+						"reminder"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.sendRequest({",
+					"    url: pm.collectionVariables.get(\"ENV\")+\"/authorization/authenticate\",",
+					"    method: 'POST',",
+					"    header: {",
+					"        'Accept': 'application/json',",
+					"        'Content-Type': 'application/x-www-form-urlencoded'",
+					"    },",
+					"    body: {",
+					"        mode: 'urlencoded',",
+					"        urlencoded: [",
+					"            {key: 'username', value: \"UNAME\"}",
+					"            {key: 'password', value: \"PWORD\"}",
+					"        ]",
+					"    }",
+					"},",
+					"    (err, res) => {",
+					"        pm.collectionVariables.set(\"TOKEN\", res.json().data.token)",
+					"});"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "ENV",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "TOKEN",
+			"value": ""
+		},
+		{
+			"key": "CUSTOMER_ID",
+			"value": ""
+		},
+		{
+			"key": "CUSTOMER_APPLICATION_ID",
+			"value": ""
+		},
+		{
+			"key": "ORDER_APPLICATION",
+			"value": ""
+		},
+		{
+			"key": "ORDER_ID",
+			"value": ""
+		}
+	]
+}
