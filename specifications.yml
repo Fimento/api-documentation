@@ -562,6 +562,10 @@ components:
           type: number
           description: Number of days the order is passed its due date
           example: "50"
+        pendingInterest:
+          type: number
+          description: Total pending/non-capitalised interest of the order
+          example: 20
 
     customer:
        type: object
