@@ -24,7 +24,7 @@ paths:
       tags:
       - Application endpoints
       summary: Create a customer
-      description: Create a customer and return its credit information
+      description: Create a customer and return its credit information. If a customer with the defined orgNumber has already been added to the system, it returns the existing one.
       requestBody:
         $ref: "#/components/requestBodies/createCustomerApplication"
       responses:
@@ -547,6 +547,10 @@ components:
           example: 20000
         decisionData:
           $ref: "#/components/schemas/decisionData"
+        utilisedCreditLimit:
+          type: number
+          description: Credit limit amount already utilised by customer
+          example: 0
 
 
     paymentsSummary:
