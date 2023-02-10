@@ -5,7 +5,11 @@ info:
   description: |
     The Fimento Open API can be used by Fimento's partners in order to provide financial products to their end customers within their own application/website.
 
-    <a href="./postman_collection.json" download target="_blank">[Download postman collection](./postman_collection.json)</a>
+    <a href="./postman_collection.json" download> [Download Postman collection] </a>
+
+    To use the collection, update the `UNAME` and `PWORD` in the root folder of the collection to the credentials received from Fimento.
+
+    To automate the collection, set the authorization token to be `{{TOKEN}}`.
     # Test objects
     Test objects can be used in the staging environment in order to test specific flows. If the customer has its `organisationNumber` equal to one of the test objects, the `applicationStatus` returned by Fimento for the create application endpoint will always be the same one as described in the following table:
     Organisation Number|Application Status
