@@ -322,9 +322,12 @@ components:
       content:
         application/json:
           schema:
-            oneOf:
-              - $ref: "#/components/schemas/singleInvoicePaymentMethod"
-              - $ref: "#/components/schemas/instalmentPaymentMethod"
+            type: object
+            properties:
+              paymentMethodId:
+                type: string
+                description: One of the payment method id presented in the "Create an order application" response
+                example: '63b597c72e7e42972e5dec23'
 
 
   responses:
@@ -538,29 +541,48 @@ components:
           type: string
           description: Application id
           example: "63b597c72e7e42972e5dec23"
-        availablePaymentMethods:
+        pricing:
           type: array
           items:
             type: object
             required:
-              - type
+              - paymentMethod
+              - amount
+              - termsOfPayment
             properties:
-              type:
+              paymentMethod:
                 type: string
-                enum:
-                  - single-invoice
-                  - instalments
                 description: |
-                  Type of payment methods available for that order.
+                  Type of payment method.
                   Possible values are
                   * single-invoice -> The order total amount will be invoiced all at once.
                   * instalments -> The order will be recuringly invoiced over a period of time
-              repaymentPeriods:
-                type: array
-                description: Available repayment period for this payment method
-                example: [6, 12, 18]
-                items:
-                  type: number
+                example: 'single-invoice'
+              amount:
+                type: number
+                description: Total debt to be repaid
+                example: 5000
+              nominalRate:
+                type: number
+                description: Yearly interest rate, in percent
+                example: 10
+              termsOfPayment:
+                type: number
+                description: Number of days before the invoice expires. Fixed to 30 days at the moment
+                example: 30
+              period:
+                type: number
+                description: Number of payments expected to repay the debt
+                example: 6
+              annuityAmount:
+                type: number
+                description: Reccuring amount to paid to repay the full debt
+                example: 926
+              startupFee:
+                type: number
+                description: Fee amount to include in the annuity calculation
+                example: 395
+
         decisionData:
           $ref: "#/components/schemas/decisionData"
 
@@ -614,31 +636,6 @@ components:
           type: array
           items:
             type: string
-
-    singleInvoicePaymentMethod:
-      type: object
-      required:
-        - paymentMethod
-      properties:
-        paymentMethod:
-          type: string
-          enum:
-          - single-invoice
-
-    instalmentPaymentMethod:
-      type: object
-      required:
-        - paymentMethod
-        - period
-      properties:
-        paymentMethod:
-          type: string
-          enum:
-          - instalment
-        period:
-          type: number
-          description: Number of months on which the order amount will be spread
-          example: 12
 
     order:
       type: object
