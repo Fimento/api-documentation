@@ -185,9 +185,11 @@ paths:
         required: true
         schema:
           type: string
+      requestBody:
+        $ref: "#/components/requestBodies/reminder"
       responses:
         200:
-          description: "Operation Successful"
+          $ref: "#/components/responses/generateReminderSuccess"
         400:
           $ref: "#/components/responses/dataError"
         401:
@@ -281,6 +283,14 @@ paths:
 
 components:
   requestBodies:
+    reminder:
+      required: true
+      description: New Reminder Data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/reminder"
+
     createOrderApplication:
       required: true
       description: New Application Data
@@ -329,6 +339,13 @@ components:
                 type: string
                 description: The new order Id
                 example: '63b597c72e7e42972e5dec23'
+
+    generateReminderSuccess:
+      description: Sucessful operation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/reminderId'
 
     orderApplicationGetSuccess:
       description: Successful operation
@@ -402,6 +419,31 @@ components:
             $ref: "#/components/schemas/serverError"
 
   schemas:
+    reminder:
+      type: object
+      properties:
+        feeAmount:
+          type: number
+          description: Reminder fee amount
+          example: 100
+        termsOfPayment:
+          type: number
+          description: Number of days the customer has to pay the reminder
+          example: 7
+        reminderType:
+          type: string
+          enum:
+            - reminder
+            - debt-collection
+
+    reminderId:
+      type: object
+      properties:
+            id:
+              type: string
+              description: The new reminder Id
+              example: "63b597c72e7e42972e5dec23"
+
     orderApplication:
       type: object
       required:
