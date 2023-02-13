@@ -233,7 +233,7 @@ paths:
       security:
         - oAuth2ClientCredentials: []
 
-  /order/{orderId}/credit-note:
+  /order/{orderId}/return:
     post:
       tags:
       - Order endpoints
@@ -249,7 +249,7 @@ paths:
         $ref: "#/components/requestBodies/createReturn"
       responses:
         200:
-          $ref: "#/components/responses/creditNoteSuccess"
+          $ref: "#/components/responses/createReturnSuccess"
         400:
           $ref: "#/components/responses/dataError"
         401:
@@ -359,7 +359,7 @@ components:
 
     createReturn:
       required: true
-      description: Items to return
+      description: Items to return, date of return and total amount of returned items along with a message detailing the reason for the return
       content:
         application/json:
           schema:
@@ -421,14 +421,12 @@ components:
           schema:
             $ref: "#/components/schemas/paymentPlanGetSuccess"
 
-    creditNoteSuccess:
+    createReturnSuccess:
       description: Successful operation
       content:
         application/json:
           schema:
-            type: string
-            properties:
-              orderId:
+            $ref: "#/components/schemas/createReturnSuccess"
 
     file:
       description: Binary file
@@ -580,33 +578,11 @@ components:
         items:
           type: array
           items:
-            type: object
-            required:
-            - article
-            - quantity
-            - amount
-            - description
-            properties:
-              article:
-                type: string
-                description: Article to return
-                example: 'Computer'
-              quantity:
-                type: number
-                description: Number of articles returned
-                example: 1
-              amount:
-                type: number
-                description: Total price of all returned articles
-                example: 5000
-              description:
-                type: string
-                example: '???'
-                description: Article description
+            $ref: "#/components/schemas/return"
         message:
           type: string
-          description: Reason for return
-          example: Broken screen
+          description: Additional message
+          example: Returning one computer
 
     orderApplicationGetSuccess:
       type: object
@@ -710,6 +686,79 @@ components:
           type: array
           items:
             type: string
+
+    createReturnSuccess:
+      type: object
+      properties:
+        items:
+          type: array
+          description: list of returned articles
+          items:
+            $ref: "#/components/schemas/return"
+        date:
+          type: string
+          description: Date of return
+          format: date
+          example: "2022-02-02"
+        transactionId:
+          type: string
+          description: Transaction id of return
+          example: "63b597c72e7e42972e5dec23"
+
+    return:
+      type: object
+      properties:
+        type: array
+        items:
+          type: object
+          required:
+          - articleId
+          - quantity
+          - amount
+          - description
+          properties:
+            articleId:
+              type: string
+              description: Id of article to return
+              example: '63b597c72e7e42972e5dec23'
+            quantity:
+              type: number
+              description: Number of articles returned
+              example: 1
+            amount:
+              type: number
+              description: Total price of all returned articles
+              example: 5000
+            description:
+              type: string
+              example: Broken screen
+              description: Return reason for this article
+
+
+    singleInvoicePaymentMethod:
+      type: object
+      required:
+        - paymentMethod
+      properties:
+        paymentMethod:
+          type: string
+          enum:
+          - single-invoice
+
+    instalmentPaymentMethod:
+      type: object
+      required:
+        - paymentMethod
+        - period
+      properties:
+        paymentMethod:
+          type: string
+          enum:
+          - instalment
+        period:
+          type: number
+          description: Number of months on which the order amount will be spread
+          example: 12
 
     order:
       type: object
