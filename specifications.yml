@@ -348,7 +348,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/reminderId'
+            $ref: "#/components/schemas/dunning"
 
     orderApplicationGetSuccess:
       description: Successful operation
@@ -438,14 +438,6 @@ components:
           enum:
             - reminder
             - debt-collection
-
-    reminderId:
-      type: object
-      properties:
-            id:
-              type: string
-              description: The new reminder Id
-              example: "63b597c72e7e42972e5dec23"
 
     orderApplication:
       type: object
