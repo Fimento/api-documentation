@@ -734,32 +734,6 @@ components:
               example: Broken screen
               description: Return reason for this article
 
-
-    singleInvoicePaymentMethod:
-      type: object
-      required:
-        - paymentMethod
-      properties:
-        paymentMethod:
-          type: string
-          enum:
-          - single-invoice
-
-    instalmentPaymentMethod:
-      type: object
-      required:
-        - paymentMethod
-        - period
-      properties:
-        paymentMethod:
-          type: string
-          enum:
-          - instalment
-        period:
-          type: number
-          description: Number of months on which the order amount will be spread
-          example: 12
-
     order:
       type: object
       properties:
