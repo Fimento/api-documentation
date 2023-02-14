@@ -579,7 +579,7 @@ components:
         items:
           type: array
           items:
-            $ref: "#/components/schemas/return"
+            $ref: "#/components/schemas/returnItems"
         message:
           type: string
           description: Additional message
@@ -706,7 +706,7 @@ components:
           description: Transaction id of return
           example: "63b597c72e7e42972e5dec23"
 
-    return:
+    returnItems:
       type: object
       properties:
         type: array
