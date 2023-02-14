@@ -763,9 +763,14 @@ components:
           type: string
           description: Reference number of order
           example: "234578169728"
-        isPaid:
+        accountStatus:
           type: boolean
-          description: Whether or not the order has been fully paid
+          description: Status of order
+          enum:
+          - pending
+          - paid
+          - late
+          - waiting-for-payment
         currency:
           $ref: "#/components/schemas/currency"
         orderAmount:
@@ -784,6 +789,11 @@ components:
           type: number
           description: Total pending/non-capitalised interest of the order
           example: 20
+        activationDate:
+          type: string
+          description: Delivery date of order
+          format: date
+          example: "2022-02-02"
 
     customer:
        type: object
@@ -856,8 +866,6 @@ components:
         isPaid:
           type: boolean
           description: Status of if the invoice is paid or not
-        invoiceType:
-          $ref: "#/components/schemas/invoiceType"
         sentAt:
           type: string
           description: Date invoice was sent to customer
@@ -975,19 +983,6 @@ components:
         * payIn -> the transaction is a payment from a customer.
         * adjustment -> the transaction is an adjustment done by the system.
         * internal -> the transaction is an internal transaction within the system between two accounts.
-
-    invoiceType:
-      type: string
-      enum:
-        - invoice
-        - credit-note
-        - reminder
-      description: |
-        Invoice type.
-        Possible values are
-        * invoice -> the invoice is a regular invoice
-        * credit-note -> the invoice is a credit note used to revert a regular invoice
-        * reminder -> the invoice is a reminder for a late invoice
 
 
     currency:
