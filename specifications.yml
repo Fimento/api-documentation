@@ -167,7 +167,7 @@ paths:
       security:
       - oAuth2ClientCredentials: []
 
-  /order/${orderId}/invoice/{invoiceId}/reminder:
+  /order/{orderId}/invoice/{invoiceId}/reminder:
     post:
       tags:
       - Order endpoints
@@ -201,7 +201,7 @@ paths:
       security:
         - oAuth2ClientCredentials: []
 
-  /order/${orderId}/invoice/{invoiceId}/download:
+  /order/{orderId}/invoice/{invoiceId}/download:
     get:
       tags:
       - Order endpoints
@@ -222,6 +222,34 @@ paths:
       responses:
         200:
           $ref: "#/components/responses/file"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        404:
+          $ref: "#/components/responses/notFoundError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+        - oAuth2ClientCredentials: []
+
+  /order/{orderId}/return:
+    post:
+      tags:
+      - Order endpoints
+      summary: Create a return
+      parameters:
+      - name: orderId
+        in: path
+        description: Order's id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        $ref: "#/components/requestBodies/createReturn"
+      responses:
+        200:
+          $ref: "#/components/responses/createReturnSuccess"
         400:
           $ref: "#/components/responses/dataError"
         401:
@@ -329,6 +357,14 @@ components:
                 description: One of the payment method id presented in the "Create an order application" response
                 example: '63b597c72e7e42972e5dec23'
 
+    createReturn:
+      required: true
+      description: Items to return, date of return and total amount of returned items along with a message detailing the reason for the return
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/return"
+
 
   responses:
     markAsConfirmedSuccess:
@@ -384,6 +420,13 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/paymentPlanGetSuccess"
+
+    createReturnSuccess:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/createReturnSuccess"
 
     file:
       description: Binary file
@@ -526,6 +569,21 @@ components:
         currency:
           $ref: "#/components/schemas/currency"
 
+    return:
+      type: object
+      required:
+      - items
+      - message
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/return"
+        message:
+          type: string
+          description: Additional message
+          example: Returning one computer
+
     orderApplicationGetSuccess:
       type: object
       properties:
@@ -628,6 +686,53 @@ components:
           type: array
           items:
             type: string
+
+    createReturnSuccess:
+      type: object
+      properties:
+        items:
+          type: array
+          description: list of returned articles
+          items:
+            $ref: "#/components/schemas/return"
+        date:
+          type: string
+          description: Date of return
+          format: date
+          example: "2022-02-02"
+        transactionId:
+          type: string
+          description: Transaction id of return
+          example: "63b597c72e7e42972e5dec23"
+
+    return:
+      type: object
+      properties:
+        type: array
+        items:
+          type: object
+          required:
+          - articleId
+          - quantity
+          - amount
+          - description
+          properties:
+            articleId:
+              type: string
+              description: Id of article to return
+              example: '63b597c72e7e42972e5dec23'
+            quantity:
+              type: number
+              description: Number of articles returned
+              example: 1
+            amount:
+              type: number
+              description: Total price of all returned articles
+              example: 5000
+            description:
+              type: string
+              example: Broken screen
+              description: Return reason for this article
 
     order:
       type: object
