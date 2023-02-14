@@ -481,6 +481,7 @@ components:
           enum:
             - reminder
             - debt-collection
+            - late
 
     orderApplication:
       type: object
