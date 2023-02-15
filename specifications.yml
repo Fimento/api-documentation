@@ -10,7 +10,7 @@ info:
 
     To use the collection, update the `UNAME` and `PWORD` in the root folder of the collection to the credentials received from Fimento.
 
-    To automate the collection, set the authorization token to be `{{TOKEN}}`.
+    To automate the collection, set the authorization token of the root folder to be the variable `{{TOKEN}}`.
     # Test objects
     Test objects can be used in the staging environment in order to test specific flows. If the customer has its `organisationNumber` equal to one of the test objects, the `applicationStatus` returned by Fimento for the create application endpoint will always be the same one as described in the following table:
     Organisation Number|Application Status
