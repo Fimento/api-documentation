@@ -5,6 +5,12 @@ info:
   description: |
     The Fimento Open API can be used by Fimento's partners in order to provide financial products to their end customers within their own application/website.
 
+    # Postman collection
+    <a href="./postman_collection.json" download> [Download Postman collection] </a>
+
+    To use the collection, update the `UNAME` and `PWORD` in the root folder of the collection to the credentials received from Fimento.
+
+    To automate the collection, set the authorization token of the root folder to be the variable `{{TOKEN}}`.
     # Test objects
     Test objects can be used in the staging environment in order to test specific flows. If the customer has its `organisationNumber` equal to one of the test objects, the `applicationStatus` returned by Fimento for the create application endpoint will always be the same one as described in the following table:
     Organisation Number|Application Status
@@ -601,6 +607,10 @@ components:
               - amount
               - termsOfPayment
             properties:
+              _id:
+                type: string
+                description: Payment method id
+                example: "63b597c72e7e42972e5dec23"
               paymentMethod:
                 type: string
                 description: |
@@ -708,32 +718,28 @@ components:
 
     returnItems:
       type: object
+      required:
+      - articleId
+      - quantity
+      - amount
+      - description
       properties:
-        type: array
-        items:
-          type: object
-          required:
-          - articleId
-          - quantity
-          - amount
-          - description
-          properties:
-            articleId:
-              type: string
-              description: Id of article to return
-              example: '63b597c72e7e42972e5dec23'
-            quantity:
-              type: number
-              description: Number of articles returned
-              example: 1
-            amount:
-              type: number
-              description: Total price of all returned articles
-              example: 5000
-            description:
-              type: string
-              example: Broken screen
-              description: Return reason for this article
+        articleId:
+          type: string
+          description: Id of article to return
+          example: '63b597c72e7e42972e5dec23'
+        quantity:
+          type: number
+          description: Number of articles returned
+          example: 1
+        amount:
+          type: number
+          description: Total price of all returned articles
+          example: 5000
+        description:
+          type: string
+          example: Broken screen
+          description: Return reason for this article
 
     order:
       type: object
@@ -758,9 +764,14 @@ components:
           type: string
           description: Reference number of order
           example: "234578169728"
-        isPaid:
+        accountStatus:
           type: boolean
-          description: Whether or not the order has been fully paid
+          description: Status of order
+          enum:
+          - pending
+          - paid
+          - late
+          - waiting-for-payment
         currency:
           $ref: "#/components/schemas/currency"
         orderAmount:
@@ -779,6 +790,11 @@ components:
           type: number
           description: Total pending/non-capitalised interest of the order
           example: 20
+        activationDate:
+          type: string
+          description: Delivery date of order
+          format: date
+          example: "2022-02-02"
 
     customer:
        type: object
@@ -851,8 +867,6 @@ components:
         isPaid:
           type: boolean
           description: Status of if the invoice is paid or not
-        invoiceType:
-          $ref: "#/components/schemas/invoiceType"
         sentAt:
           type: string
           description: Date invoice was sent to customer
@@ -872,9 +886,9 @@ components:
         fee:
           type: object
           properties:
-            transactioIds:
+            transactionIds:
               type: array
-              description: "Transactions leading to the fee amount"
+              description: Transactions corresponding to the the fee
               items:
                 type: string
                 example: "63da375f0043292df2fd2982"
@@ -882,7 +896,7 @@ components:
               type: number
               description: "Reminder fee amount"
               example: 60
-        "_id":
+        _id:
           type: string
           example: "63da37e01a786fc1b70ed884"
         issueDate:
@@ -970,19 +984,6 @@ components:
         * payIn -> the transaction is a payment from a customer.
         * adjustment -> the transaction is an adjustment done by the system.
         * internal -> the transaction is an internal transaction within the system between two accounts.
-
-    invoiceType:
-      type: string
-      enum:
-        - invoice
-        - credit-note
-        - reminder
-      description: |
-        Invoice type.
-        Possible values are
-        * invoice -> the invoice is a regular invoice
-        * credit-note -> the invoice is a credit note used to revert a regular invoice
-        * reminder -> the invoice is a reminder for a late invoice
 
 
     currency:
