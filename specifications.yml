@@ -5,6 +5,10 @@ info:
   description: |
     The Fimento Open API can be used by Fimento's partners in order to provide financial products to their end customers within their own application/website.
 
+    # Postman collection
+    <a href="./postman_collection.json" download> [Download Postman collection] </a>
+
+    To use the collection, set the `UNAME` and `PWORD` variables in the root folder of the collection to the credentials received from Fimento.
     # Test objects
     Test objects can be used in the staging environment in order to test specific flows. If the customer has its `organisationNumber` equal to one of the test objects, the `applicationStatus` returned by Fimento for the create application endpoint will always be the same one as described in the following table:
     Organisation Number|Application Status
@@ -24,7 +28,7 @@ paths:
       tags:
       - Application endpoints
       summary: Create a customer
-      description: Create a customer and return its credit information
+      description: Create a customer and return its credit information. If a customer with the defined orgNumber has already been added to the system, it returns the existing one.
       requestBody:
         $ref: "#/components/requestBodies/createCustomerApplication"
       responses:
@@ -167,7 +171,41 @@ paths:
       security:
       - oAuth2ClientCredentials: []
 
-  /order/${orderId}/invoice/{invoiceId}/download:
+  /order/{orderId}/invoice/{invoiceId}/reminder:
+    post:
+      tags:
+      - Order endpoints
+      summary: Create an invoice reminder
+      parameters:
+      - name: orderId
+        in: path
+        description: Order's id
+        required: true
+        schema:
+          type: string
+      - name: invoiceId
+        in: path
+        description: Invoice's id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        $ref: "#/components/requestBodies/reminder"
+      responses:
+        200:
+          $ref: "#/components/responses/generateReminderSuccess"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        404:
+          $ref: "#/components/responses/notFoundError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+        - oAuth2ClientCredentials: []
+
+  /order/{orderId}/invoice/{invoiceId}/download:
     get:
       tags:
       - Order endpoints
@@ -188,6 +226,34 @@ paths:
       responses:
         200:
           $ref: "#/components/responses/file"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        404:
+          $ref: "#/components/responses/notFoundError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+        - oAuth2ClientCredentials: []
+
+  /order/{orderId}/return:
+    post:
+      tags:
+      - Order endpoints
+      summary: Create a return
+      parameters:
+      - name: orderId
+        in: path
+        description: Order's id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        $ref: "#/components/requestBodies/createReturn"
+      responses:
+        200:
+          $ref: "#/components/responses/createReturnSuccess"
         400:
           $ref: "#/components/responses/dataError"
         401:
@@ -220,8 +286,43 @@ paths:
       security:
         - oAuth2ClientCredentials: []
 
+  /order/:orderId/payment-plan:
+    get:
+      tags:
+      - Order endpoints
+      summary: Get payment plan of order
+      description: Get upcoming invoices
+      parameters:
+      - name: orderId
+        in: path
+        description: Order's id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: "#/components/responses/paymentPlanGetSuccess"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        404:
+          $ref: "#/components/responses/notFoundError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+      - oAuth2ClientCredentials: []
+
 components:
   requestBodies:
+    reminder:
+      required: true
+      description: New Reminder Data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/reminder"
+
     createOrderApplication:
       required: true
       description: New Application Data
@@ -253,9 +354,20 @@ components:
       content:
         application/json:
           schema:
-            oneOf:
-              - $ref: "#/components/schemas/singleInvoicePaymentMethod"
-              - $ref: "#/components/schemas/instalmentPaymentMethod"
+            type: object
+            properties:
+              paymentMethodId:
+                type: string
+                description: One of the payment method id presented in the "Create an order application" response
+                example: '63b597c72e7e42972e5dec23'
+
+    createReturn:
+      required: true
+      description: Items to return, date of return and total amount of returned items along with a message detailing the reason for the return
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/return"
 
 
   responses:
@@ -270,6 +382,13 @@ components:
                 type: string
                 description: The new order Id
                 example: '63b597c72e7e42972e5dec23'
+
+    generateReminderSuccess:
+      description: Sucessful operation
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/dunning"
 
     orderApplicationGetSuccess:
       description: Successful operation
@@ -298,6 +417,21 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/paymentsSummary"
+
+    paymentPlanGetSuccess:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/paymentPlanGetSuccess"
+
+    createReturnSuccess:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/createReturnSuccess"
+
     file:
       description: Binary file
       content:
@@ -335,6 +469,24 @@ components:
             $ref: "#/components/schemas/serverError"
 
   schemas:
+    reminder:
+      type: object
+      properties:
+        feeAmount:
+          type: number
+          description: Reminder fee amount
+          example: 100
+        termsOfPayment:
+          type: number
+          description: Number of days the customer has to pay the reminder
+          example: 7
+        reminderType:
+          type: string
+          enum:
+            - reminder
+            - debt-collection
+            - late
+
     orderApplication:
       type: object
       required:
@@ -422,6 +574,21 @@ components:
         currency:
           $ref: "#/components/schemas/currency"
 
+    return:
+      type: object
+      required:
+      - items
+      - message
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/returnItems"
+        message:
+          type: string
+          description: Additional message
+          example: Returning one computer
+
     orderApplicationGetSuccess:
       type: object
       properties:
@@ -429,34 +596,62 @@ components:
           type: string
           description: Application id
           example: "63b597c72e7e42972e5dec23"
-        availablePaymentMethods:
+        pricing:
           type: array
           items:
             type: object
             required:
-              - type
+              - paymentMethod
+              - amount
+              - termsOfPayment
             properties:
-              type:
+              _id:
                 type: string
-                enum:
-                  - single-invoice
-                  - instalments
+                description: Payment method id
+                example: "63b597c72e7e42972e5dec23"
+              paymentMethod:
+                type: string
                 description: |
-                  Type of payment methods available for that order.
+                  Type of payment method.
                   Possible values are
                   * single-invoice -> The order total amount will be invoiced all at once.
                   * instalments -> The order will be recuringly invoiced over a period of time
-              repaymentPeriods:
-                type: array
-                description: Available repayment period for this payment method
-                example: [6, 12, 18]
-                items:
-                  type: number
+                example: 'single-invoice'
+              amount:
+                type: number
+                description: Total debt to be repaid
+                example: 5000
+              nominalRate:
+                type: number
+                description: Yearly interest rate, in percent
+                example: 10
+              termsOfPayment:
+                type: number
+                description: Number of days before the invoice expires. Fixed to 30 days at the moment
+                example: 30
+              period:
+                type: number
+                description: Number of payments expected to repay the debt
+                example: 6
+              annuityAmount:
+                type: number
+                description: Reccuring amount to paid to repay the full debt
+                example: 926
+              startupFee:
+                type: number
+                description: Fee amount to include in the annuity calculation
+                example: 395
+
         decisionData:
           $ref: "#/components/schemas/decisionData"
 
     orderGetSuccess:
       $ref: "#/components/schemas/order"
+
+    paymentPlanGetSuccess:
+      type: array
+      items:
+        $ref: "#/components/schemas/paymentPlanInvoice"
 
     customerGetSuccess:
       type: object
@@ -475,6 +670,10 @@ components:
           example: 20000
         decisionData:
           $ref: "#/components/schemas/decisionData"
+        utilisedCreditLimit:
+          type: number
+          description: Credit limit amount already utilised by customer
+          example: 0
 
 
     paymentsSummary:
@@ -497,30 +696,48 @@ components:
           items:
             type: string
 
-    singleInvoicePaymentMethod:
+    createReturnSuccess:
       type: object
-      required:
-        - paymentMethod
       properties:
-        paymentMethod:
+        items:
+          type: array
+          description: list of returned articles
+          items:
+            $ref: "#/components/schemas/return"
+        date:
           type: string
-          enum:
-          - single-invoice
+          description: Date of return
+          format: date
+          example: "2022-02-02"
+        transactionId:
+          type: string
+          description: Transaction id of return
+          example: "63b597c72e7e42972e5dec23"
 
-    instalmentPaymentMethod:
+    returnItems:
       type: object
       required:
-        - paymentMethod
-        - period
+      - articleId
+      - quantity
+      - amount
+      - description
       properties:
-        paymentMethod:
+        articleId:
           type: string
-          enum:
-          - instalment
-        period:
+          description: Id of article to return
+          example: '63b597c72e7e42972e5dec23'
+        quantity:
           type: number
-          description: Number of months on which the order amount will be spread
-          example: 12
+          description: Number of articles returned
+          example: 1
+        amount:
+          type: number
+          description: Total price of all returned articles
+          example: 5000
+        description:
+          type: string
+          example: Broken screen
+          description: Return reason for this article
 
     order:
       type: object
@@ -545,9 +762,14 @@ components:
           type: string
           description: Reference number of order
           example: "234578169728"
-        isPaid:
+        accountStatus:
           type: boolean
-          description: Whether or not the order has been fully paid
+          description: Status of order
+          enum:
+          - pending
+          - paid
+          - late
+          - waiting-for-payment
         currency:
           $ref: "#/components/schemas/currency"
         orderAmount:
@@ -562,6 +784,15 @@ components:
           type: number
           description: Number of days the order is passed its due date
           example: "50"
+        pendingInterest:
+          type: number
+          description: Total pending/non-capitalised interest of the order
+          example: 20
+        activationDate:
+          type: string
+          description: Delivery date of order
+          format: date
+          example: "2022-02-02"
 
     customer:
        type: object
@@ -634,8 +865,6 @@ components:
         isPaid:
           type: boolean
           description: Status of if the invoice is paid or not
-        invoiceType:
-          $ref: "#/components/schemas/invoiceType"
         sentAt:
           type: string
           description: Date invoice was sent to customer
@@ -643,6 +872,69 @@ components:
           example: "2022-04-07"
         status:
           $ref: "#/components/schemas/invoiceStatus"
+        dunning:
+          type: array
+          description: "List of reminders and fees in case of late payment of the invoice"
+          items:
+            $ref: "#/components/schemas/dunning"
+
+    dunning:
+      type: object
+      properties:
+        fee:
+          type: object
+          properties:
+            transactionIds:
+              type: array
+              description: Transactions corresponding to the the fee
+              items:
+                type: string
+                example: "63da375f0043292df2fd2982"
+            amount:
+              type: number
+              description: "Reminder fee amount"
+              example: 60
+        _id:
+          type: string
+          example: "63da37e01a786fc1b70ed884"
+        issueDate:
+          type: string
+          description: "Reminder expiry date"
+          format: date
+          example: "2022-04-08"
+        expiryDate:
+          type: string
+          description: "Reminder issue date"
+          format: date
+          example: "2022-04-22"
+        endGracePeriod:
+          type: string
+          description: "Reminder end grace period date"
+          format: date
+          example: "2022-04-27"
+
+    paymentPlanInvoice:
+      type: object
+      properties:
+        amount:
+          type: number
+          description: Amount of invoice
+          example: "10000"
+        issueDate:
+          type: string
+          description: Issue date of invoice
+          format: date
+          example: "2022-02-02"
+        expiryDate:
+          type: string
+          description: Expiry date of invoice
+          format: date
+          example: "2022-04-02"
+        endGracePeriod:
+          type: string
+          description: Grace period of invoice
+          format: date
+          example: "2022-04-07"
 
     decisionData:
       type: object
@@ -690,19 +982,6 @@ components:
         * payIn -> the transaction is a payment from a customer.
         * adjustment -> the transaction is an adjustment done by the system.
         * internal -> the transaction is an internal transaction within the system between two accounts.
-
-    invoiceType:
-      type: string
-      enum:
-        - invoice
-        - credit-note
-        - reminder
-      description: |
-        Invoice type.
-        Possible values are
-        * invoice -> the invoice is a regular invoice
-        * credit-note -> the invoice is a credit note used to revert a regular invoice
-        * reminder -> the invoice is a reminder for a late invoice
 
 
     currency:

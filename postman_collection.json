@@ -1,0 +1,503 @@
+{
+	"info": {
+		"_postman_id": "c5bd7d63-719b-4e36-8683-c991373fbf07",
+		"name": "Fimento Partner API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14190635"
+	},
+	"item": [
+		{
+			"name": "customer",
+			"item": [
+				{
+					"name": "Create a customer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"CUSTOMER_ID\", jsonData.customerId);",
+									"pm.collectionVariables.set(\"CUSTOMER_APPLICATION_ID\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"organisationNumber\": \"Organisation number\",\r\n    \"alias\": \"Alias\",\r\n    \"country\": \"SE\",\r\n    \"creditLimit\": 5500,\r\n    \"currency\": \"SEK\",\r\n    \"name\": \"company\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ENV}}/application/customer",
+							"host": [
+								"{{ENV}}"
+							],
+							"path": [
+								"application",
+								"customer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a customer",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{ENV}}/application/customer/{{CUSTOMER_APPLICATION_ID}}",
+							"host": [
+								"{{ENV}}"
+							],
+							"path": [
+								"application",
+								"customer",
+								"{{CUSTOMER_APPLICATION_ID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "application",
+			"item": [
+				{
+					"name": "Create an order application",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"ORDER_APPLICATION\", jsonData.id);",
+									"pm.collectionVariables.set(\"PAYMENT_METHOD_ID\", jsonData.pricing[0]._id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"items\": [{\r\n        \"price\": 1000,\r\n        \"quantity\": 1,\r\n        \"name\": \"asset\",\r\n        \"unit\": \"antal\",\r\n        \"vatPercentage\": 25\r\n    }],\r\n    \"reference\": \"Order reference number\",\r\n    \"currency\": \"SEK\",\r\n    \"customerId\": \"{{CUSTOMER_ID}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ENV}}/application/order",
+							"host": [
+								"{{ENV}}"
+							],
+							"path": [
+								"application",
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get an order application",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{ENV}}/application/order/{{ORDER_APPLICATION}}",
+							"host": [
+								"{{ENV}}"
+							],
+							"path": [
+								"application",
+								"order",
+								"{{ORDER_APPLICATION}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm an order application",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"ORDER_ID\", jsonData.orderId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"paymentMethodId\": \"{{PAYMENT_METHOD_ID}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ENV}}/application/order/{{ORDER_APPLICATION}}/confirm",
+							"host": [
+								"{{ENV}}"
+							],
+							"path": [
+								"application",
+								"order",
+								"{{ORDER_APPLICATION}}",
+								"confirm"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "order",
+			"item": [
+				{
+					"name": "invoice",
+					"item": [
+						{
+							"name": "Get an invoice PDF",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{ENV}}/order/{{ORDER_ID}}/invoice/{{INVOICE_ID}}/download",
+									"host": [
+										"{{ENV}}"
+									],
+									"path": [
+										"order",
+										"{{ORDER_ID}}",
+										"invoice",
+										"{{INVOICE_ID}}",
+										"download"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create an invoice reminder",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"feeAmount\": 60,\n    \"termsOfPayment\": 30,\n    \"reminderType\": \"reminder\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ENV}}/order/{{ORDER_ID}}/invoice/{{INVOICE_ID}}/reminder",
+									"host": [
+										"{{ENV}}"
+									],
+									"path": [
+										"order",
+										"{{ORDER_ID}}",
+										"invoice",
+										"{{INVOICE_ID}}",
+										"reminder"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Get an order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"INVOICE_ID\", jsonData.invoices[0].id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{ENV}}/order/{{ORDER_ID}}",
+							"host": [
+								"{{ENV}}"
+							],
+							"path": [
+								"order",
+								"{{ORDER_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a return",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"items\": [{\n        \"articleId\": \"63ecccb3f88ac10034b80b81\",\n        \"quantity\": 1,\n        \"amount\": 1000,\n        \"description\": \"asset\"\n    }],\n    \"message\": \"Broken\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ENV}}/order/{{ORDER_ID}}/return",
+							"host": [
+								"{{ENV}}"
+							],
+							"path": [
+								"order",
+								"{{ORDER_ID}}",
+								"return"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get payment plan",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{ENV}}/order/{{ORDER_ID}}/payment-plan",
+							"host": [
+								"{{ENV}}"
+							],
+							"path": [
+								"order",
+								"{{ORDER_ID}}",
+								"payment-plan"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "payments",
+			"item": [
+				{
+					"name": "Register payments",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": ""
+							}
+						},
+						"url": {
+							"raw": "{{ENV}}/upload/payment-file",
+							"host": [
+								"{{ENV}}"
+							],
+							"path": [
+								"upload",
+								"payment-file"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.collectionVariables.set(\"TOKEN\", jsonData.data.token)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{UNAME}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{PWORD}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{ENV}}/authorization/authenticate",
+					"host": [
+						"{{ENV}}"
+					],
+					"path": [
+						"authorization",
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{TOKEN}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "ENV",
+			"value": "https://api.stage.fimento.com",
+			"type": "string"
+		},
+		{
+			"key": "TOKEN",
+			"value": ""
+		},
+		{
+			"key": "CUSTOMER_ID",
+			"value": ""
+		},
+		{
+			"key": "CUSTOMER_APPLICATION_ID",
+			"value": ""
+		},
+		{
+			"key": "ORDER_APPLICATION",
+			"value": ""
+		},
+		{
+			"key": "ORDER_ID",
+			"value": ""
+		},
+		{
+			"key": "UNAME",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "PWORD",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "INVOICE_ID",
+			"value": ""
+		},
+		{
+			"key": "PAYMENT_METHOD_ID",
+			"value": ""
+		}
+	]
+}
