@@ -5,6 +5,7 @@ info:
   description: |
     The Fimento Open API can be used by Fimento's partners in order to provide financial products to their end customers within their own application/website.
 
+    # Postman collection
     <a href="./postman_collection.json" download> [Download Postman collection] </a>
 
     To use the collection, update the `UNAME` and `PWORD` in the root folder of the collection to the credentials received from Fimento.
@@ -606,6 +607,10 @@ components:
               - amount
               - termsOfPayment
             properties:
+              _id:
+                type: string
+                description: Payment method id
+                example: "63b597c72e7e42972e5dec23"
               paymentMethod:
                 type: string
                 description: |
@@ -713,32 +718,28 @@ components:
 
     returnItems:
       type: object
+      required:
+      - articleId
+      - quantity
+      - amount
+      - description
       properties:
-        type: array
-        items:
-          type: object
-          required:
-          - articleId
-          - quantity
-          - amount
-          - description
-          properties:
-            articleId:
-              type: string
-              description: Id of article to return
-              example: '63b597c72e7e42972e5dec23'
-            quantity:
-              type: number
-              description: Number of articles returned
-              example: 1
-            amount:
-              type: number
-              description: Total price of all returned articles
-              example: 5000
-            description:
-              type: string
-              example: Broken screen
-              description: Return reason for this article
+        articleId:
+          type: string
+          description: Id of article to return
+          example: '63b597c72e7e42972e5dec23'
+        quantity:
+          type: number
+          description: Number of articles returned
+          example: 1
+        amount:
+          type: number
+          description: Total price of all returned articles
+          example: 5000
+        description:
+          type: string
+          example: Broken screen
+          description: Return reason for this article
 
     order:
       type: object
@@ -885,9 +886,9 @@ components:
         fee:
           type: object
           properties:
-            transactioIds:
+            transactionIds:
               type: array
-              description: "Transactions leading to the fee amount"
+              description: Transactions corresponding to the the fee
               items:
                 type: string
                 example: "63da375f0043292df2fd2982"
@@ -895,7 +896,7 @@ components:
               type: number
               description: "Reminder fee amount"
               example: 60
-        "_id":
+        _id:
           type: string
           example: "63da37e01a786fc1b70ed884"
         issueDate:
