@@ -797,6 +797,12 @@ components:
           description: Delivery date of order
           format: date
           example: "2022-02-02"
+        articles:
+          type: array
+          items:
+            $ref: "#/components/schemas/articleOfOrder"
+    
+    
 
     customer:
       type: object
@@ -815,15 +821,26 @@ components:
         quantity:
           type: number
           description: Number of item(s)
-        unit:
+        description:
           type: string
-          description: Unit for the quantity of the item.
-        name:
+          description: Description of the item
+
+    articleOfOrder:
+      type: object
+      properties:
+        _id:
           type: string
-          description: Name of item
-        vatAmount:
+          description: Article id
+          example: "63ef87c26a869f1556de1252"
+        price:
           type: number
-          description: Amount of VAT
+          description: Total price for all the items, including VAT
+        quantity:
+          type: number
+          description: Number of item(s)
+        description:
+          type: string
+          description: Description of the item
 
 
     transaction:
@@ -919,7 +936,7 @@ components:
           description: Registration date of the credit invoice
         referenceNumber: 
           type: string
-          description: Payment reference number of invoice to be used when paying
+          description: Payment reference number of invoice
         pdfGeneratedAt:
           type: string
           format: date
