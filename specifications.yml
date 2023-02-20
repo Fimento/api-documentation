@@ -143,6 +143,26 @@ paths:
           $ref: "#/components/responses/serverError"
       security:
       - oAuth2ClientCredentials: []
+  
+  /application/{applicationId}/decision:
+    put:
+      tags:
+      - Application endpoints
+      summary: Take decision on application
+      description: Change the decision status on an already existing application. It returns a message with the outcome of the operation.
+      requestBody:
+        $ref: "#/components/requestBodies/takeDecisionOnApplication"
+      responses:
+        200:
+          $ref: "#/components/responses/takeDecisionSuccess"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+        - oAuth2ClientCredentials: []
 
   /order/{orderId}:
     get:
@@ -339,6 +359,14 @@ components:
           schema:
             $ref: "#/components/schemas/customerApplication"
 
+    takeDecisionOnApplication:
+      required: true
+      description: Decision Data
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/takeDecisionData"
+
     registerPayments:
       required: true
       description: A file containing payments from one or several customers. An example of the file format can be provided on demand
@@ -396,6 +424,18 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/orderApplicationGetSuccess"
+
+    takeDecisionSuccess:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Outcome of the operation
+                example: 'Decision correctly updated to denied'
 
     orderGetSuccess:
       description: Successful operation
@@ -948,6 +988,18 @@ components:
             type: string
             description: Description
             example: Automatic grant
+    
+    takeDecisionData:
+      type: object
+      required:
+        - decision
+      properties:
+        decision:
+          $ref: "#/components/schemas/decision"
+        decisionReason:
+          type: string
+          description: Reason to justify the decision taken. Required if decision is denied.
+          
 
     invoiceStatus:
       type: string
