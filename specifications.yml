@@ -641,6 +641,10 @@ components:
                 type: number
                 description: Fee amount to include in the annuity calculation
                 example: 395
+        articles:
+          type: array
+          items:
+            $ref: "#/components/schemas/article"
 
         decisionData:
           $ref: "#/components/schemas/decisionData"
@@ -793,14 +797,51 @@ components:
           description: Delivery date of order
           format: date
           example: "2022-02-02"
+        articles:
+          type: array
+          items:
+            $ref: "#/components/schemas/articleOfOrder"
+    
+    
 
     customer:
-       type: object
-       properties:
-        id:
+      type: object
+      properties:
+      id:
+        type: string
+        description: Customer id
+        example: "63b597c72e7e42972e5dec23"
+    
+    article:
+      type: object
+      properties:
+        price:
+          type: number
+          description: Total price for all the items, including VAT
+        quantity:
+          type: number
+          description: Number of item(s)
+        description:
           type: string
-          description: Customer id
-          example: "63b597c72e7e42972e5dec23"
+          description: Description of the item
+
+    articleOfOrder:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Article id
+          example: "63ef87c26a869f1556de1252"
+        price:
+          type: number
+          description: Total price for all the items, including VAT
+        quantity:
+          type: number
+          description: Number of item(s)
+        description:
+          type: string
+          description: Description of the item
+
 
     transaction:
       type: object
@@ -877,6 +918,34 @@ components:
           description: "List of reminders and fees in case of late payment of the invoice"
           items:
             $ref: "#/components/schemas/dunning"
+        creditInvoices:
+          type: array
+          description: "List of credit invoices"
+          items:
+            $ref: "#/components/schemas/creditInvoice"
+
+    creditInvoice: 
+      type: object
+      properties:
+        amount:
+          type: number
+          description: Amount of the credit invoice
+        date:
+          type: string
+          format: date
+          description: Registration date of the credit invoice
+        referenceNumber: 
+          type: string
+          description: Payment reference number of invoice
+        pdfGeneratedAt:
+          type: string
+          format: date
+          description: PDF generation date
+        sentAt:
+          type: string
+          format: date
+          description: Date when the pdf has been sent out
+
 
     dunning:
       type: object
