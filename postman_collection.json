@@ -98,7 +98,7 @@
 								"exec": [
 									"var jsonData = JSON.parse(responseBody);",
 									"pm.collectionVariables.set(\"ORDER_APPLICATION\", jsonData.id);",
-									"pm.collectionVariables.set(\"PAYMENT_METHOD_ID\", jsonData.pricing[0]._id);"
+									"pm.collectionVariables.set(\"PAYMENT_METHOD_ID\", jsonData.pricing[0].id);"
 								],
 								"type": "text/javascript"
 							}

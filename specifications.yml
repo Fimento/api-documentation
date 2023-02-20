@@ -605,7 +605,7 @@ components:
               - amount
               - termsOfPayment
             properties:
-              _id:
+              id:
                 type: string
                 description: Payment method id
                 example: "63b597c72e7e42972e5dec23"
@@ -629,7 +629,7 @@ components:
                 type: number
                 description: Number of days before the invoice expires. Fixed to 30 days at the moment
                 example: 30
-              period:
+              numberOfInstalments:
                 type: number
                 description: Number of payments expected to repay the debt
                 example: 6
