@@ -366,17 +366,17 @@ components:
         application/json:
           schema:
             oneOf:
-              - $ref: "#/components/schemas/takeDecisionDataCustomerApplication"
-              - $ref: "#/components/schemas/takeDecisionDataFinancingApplication"
+              - $ref: "#/components/schemas/BodyForCustomerApplication"
+              - $ref: "#/components/schemas/BodyForFinancingApplication"
           examples:
-            Referred:
+            "Refer Application":
               value:
                 decision: "referred"
-            Denied:
+            "Deny Application":
               value:
                 decision: "denied"
                 decisionReason: "Reason for denied"
-            FinancingApplicationGranted:
+            "Grant Financing Application":
               value:
                 decision: "granted"
                 decisionReason: "Reason for granted"
@@ -391,7 +391,7 @@ components:
                         billingMethod: "separate"
                     }]
                 }
-            CustomerApplicationGranted:
+            "Grant Customer Application":
               value:
                 decision: "granted"
                 decisionReason: "Reason for granted"
@@ -1024,7 +1024,7 @@ components:
             description: Description
             example: Automatic grant
     
-    takeDecisionDataCustomerApplication:
+    BodyForCustomerApplication:
       type: object
       required:
         - decision
@@ -1037,7 +1037,7 @@ components:
         terms:
           $ref: "#/components/schemas/termsForCustomerApplication"
 
-    takeDecisionDataFinancingApplication:
+    BodyForFinancingApplication:
       type: object
       required:
         - decision
