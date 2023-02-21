@@ -365,7 +365,42 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/takeDecisionData"
+            oneOf:
+              - $ref: "#/components/schemas/takeDecisionDataCustomerApplication"
+              - $ref: "#/components/schemas/takeDecisionDataFinancingApplication"
+          examples:
+            Referred:
+              value:
+                decision: "referred"
+            Denied:
+              value:
+                decision: "denied"
+                decisionReason: "Reason for denied"
+            FinancingApplicationGranted:
+              value:
+                decision: "granted"
+                decisionReason: "Reason for granted"
+                terms: {
+                    financeAmount: 3000,
+                    feeSettings: [{
+                        rateType: "variable",
+                        feeTrigger: "monthly-until-paid",
+                        feeReferenceAmount: "financed-amount",
+                        dayCountConvention: "actual-360",
+                        percentageValue: 10.25,
+                        billingMethod: "separate"
+                    }]
+                }
+            CustomerApplicationGranted:
+              value:
+                decision: "granted"
+                decisionReason: "Reason for granted"
+                terms: {
+                    creditLimit: 5000,
+                    creditLimitCurrency: "SEK",
+                    creditInsuranceLimit: 400,
+                    creditInsuranceLimitCurrency: "EUR"
+                }
 
     registerPayments:
       required: true
@@ -989,16 +1024,31 @@ components:
             description: Description
             example: Automatic grant
     
-    takeDecisionData:
+    takeDecisionDataCustomerApplication:
       type: object
       required:
         - decision
       properties:
         decision:
-          $ref: "#/components/schemas/decision"
+          $ref: "#/components/schemas/manualDecision"
         decisionReason:
           type: string
-          description: Reason to justify the decision taken. Required if decision is denied.
+          description: Reason to justify the decision taken. (Look at the examples on the right to understand when it's required)
+        terms:
+          $ref: "#/components/schemas/termsForCustomerApplication"
+
+    takeDecisionDataFinancingApplication:
+      type: object
+      required:
+        - decision
+      properties:
+        decision:
+          $ref: "#/components/schemas/manualDecision"
+        decisionReason:
+          type: string
+          description: Reason to justify the decision taken. (Look at the examples on the right to understand when it's required)
+        terms:
+          $ref: "#/components/schemas/termsForFinancingApplication"
           
 
     invoiceStatus:
@@ -1058,6 +1108,123 @@ components:
         * granted -> application is granted and no manual review is necessary.
         * pending -> application has started the automatic processing.
         * new -> application is new and has not yet started the automatic processing.
+
+    manualDecision:
+      type: string
+      enum:
+        - granted
+        - referred
+        - denied
+      description: |
+        Current decision of an application.
+        Possible values are
+        * denied -> application is denied and no manual review is necessary.
+        * referred -> application will go through manual review.
+        * granted -> application is granted and no manual review is necessary.
+
+    termsForCustomerApplication:
+      type: object
+      description: Terms of the application. (Look at the examples on the right to understand when they are required)
+      properties:
+        creditLimit:
+          type: number
+          description: "Credit limit for the specific customer"
+        creditLimitCurrency:
+          type: string
+          description: "Currency for the credit limit"
+        creditInsuranceLimit:
+          type: number
+          description: "Credit limit for the insurance"
+        creditInsuranceLimitCurrency:
+          type: string
+          description: "Currency for the insurance credit limit"
+
+    termsForFinancingApplication:
+      type: object
+      description: Terms of the application. (Look at the examples on the right to understand when they are required)
+      properties:
+        financeAmount:
+          type: number
+          description: Amount to be financed
+        feeSettings:
+          type: array
+          description: "List of settings for the fee"
+          items:
+            $ref: "#/components/schemas/feeSetting"
+    
+    feeSetting:
+      type: object
+      properties: 
+        rateType:
+          $ref: "#/components/schemas/rateType"
+        feeTrigger:
+          $ref: "#/components/schemas/feeTrigger"
+        feeReferenceAmount:
+          $ref: "#/components/schemas/feeReferenceAmount"
+        dayCountConvention:
+          $ref: "#/components/schemas/dayCountConvention"
+        percentageValue:
+          type: number
+          description: "Percentage of the fee"
+        billingMethod:
+          $ref: "#/components/schemas/billingMethod"
+
+    rateType:
+      type: string
+      enum:
+        - flat
+        - variable
+      description: |
+        Rate type of a fee.
+        Possible values are
+        * flat -> the rate of the fee remains constant.
+        * variable -> the rate of the fee can change.
+    
+    feeTrigger:
+      type: string
+      enum: 
+        - 'monthly-until-paid'
+        - 'on-financing'
+        - 'on-payment'
+      description: |
+        When the fee is calculated.
+        Possible values are
+        * monthly-until-paid -> the fee is calculated monthly until the invoice is paid.
+        * on-financing -> the fee is calculated at the moment of financing.
+        * on-payment -> the fee is calculate at the moment the invoice is paid.
+    
+    feeReferenceAmount:
+      type: string
+      enum:
+        - 'invoice-amount'
+        - 'financed-amount'
+      description: |
+        The reference used to calculate the fee.
+        Possible values are
+        * invoice-amount -> the fee is calculated on the invoice amount.
+        * financed-amount -> the fee is calculated on the finance amount.
+    
+    dayCountConvention:
+      type: string
+      enum:
+        - 'actual-360'
+        - 'actual-365'
+      description: |
+        Number of day on which the interest is calculated.
+        Possible values are
+        * actual-360 -> the fee is calculated on 360 days.
+        * actual-365 -> the fee is calculated on 365 days.
+
+    billingMethod:
+      type: string
+      enum:
+        - 'deduct'
+        - 'separate'
+      description: |
+        Methodology used for billing.
+        Possible values are
+        * deduct -> The value of the fee is included in the financed amount.
+        * separate -> The value of the fee is not included in the financed amount.
 
     error:
       type: object
