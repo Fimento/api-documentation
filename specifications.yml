@@ -1163,7 +1163,7 @@ components:
           $ref: "#/components/schemas/dayCountConvention"
         percentageValue:
           type: number
-          description: "Percentage of the fee"
+          description: "Percentage of the fee. In case the rate type is flat then it's related to reference amount otherwise it's an annual interest rate."
         billingMethod:
           $ref: "#/components/schemas/billingMethod"
 
