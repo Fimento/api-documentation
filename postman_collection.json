@@ -423,6 +423,34 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Take decision on application",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n    \"decision\": \"denied\",\n    \"decisionReason\": \"Not looking good\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ENV}}/application/{{CUSTOMER_APPLICATION_ID}}/decision",
+					"host": [
+						"{{ENV}}"
+					],
+					"path": [
+						"application",
+						"{{CUSTOMER_APPLICATION_ID}}",
+						"decision"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"auth": {
