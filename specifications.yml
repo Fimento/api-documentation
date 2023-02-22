@@ -470,7 +470,7 @@ components:
               message:
                 type: string
                 description: Outcome of the operation
-                example: 'Decision correctly updated to denied'
+                example: 'Decision updated to denied'
 
     orderGetSuccess:
       description: Successful operation
