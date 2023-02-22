@@ -1124,7 +1124,7 @@ components:
 
     termsForCustomerApplication:
       type: object
-      description: Terms of the application. (Look at the examples on the right to understand when they are required)
+      description: Terms of the application.
       properties:
         creditLimit:
           type: number
@@ -1141,7 +1141,7 @@ components:
 
     termsForFinancingApplication:
       type: object
-      description: Terms of the application. (Look at the examples on the right to understand when they are required)
+      description: Terms of the application.
       properties:
         financeAmount:
           type: number
