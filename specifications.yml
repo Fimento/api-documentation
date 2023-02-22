@@ -1208,7 +1208,7 @@ components:
         - 'actual-360'
         - 'actual-365'
       description: |
-        Actual method of the fee.
+        Actual method of the fee. Only used for variable rate type.
         Possible values are
         * actual-360 -> Actual/360.
         * actual-365 -> Actual/365.
