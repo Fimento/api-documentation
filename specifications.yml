@@ -379,7 +379,6 @@ components:
             "Grant Financing Application":
               value:
                 decision: "granted"
-                decisionReason: "Reason for granted"
                 terms: {
                     financeAmount: 3000,
                     feeSettings: [{
@@ -394,7 +393,6 @@ components:
             "Grant Customer Application":
               value:
                 decision: "granted"
-                decisionReason: "Reason for granted"
                 terms: {
                     creditLimit: 5000,
                     creditLimitCurrency: "SEK",
@@ -1187,9 +1185,9 @@ components:
         - 'on-financing'
         - 'on-payment'
       description: |
-        When the fee is calculated.
+        When the fee is capitalised.
         Possible values are
-        * monthly-until-paid -> the fee is calculated monthly until the invoice is paid.
+        * monthly-until-paid -> the fee will be capitalised every month until the invoice is paid.
         * on-financing -> the fee is calculated at the moment of financing.
         * on-payment -> the fee is calculate at the moment the invoice is paid.
     
@@ -1210,10 +1208,10 @@ components:
         - 'actual-360'
         - 'actual-365'
       description: |
-        Number of day on which the interest is calculated.
+        Actual method of the fee.
         Possible values are
-        * actual-360 -> the fee is calculated on 360 days.
-        * actual-365 -> the fee is calculated on 365 days.
+        * actual-360 -> Actual/360.
+        * actual-365 -> Actual/365.
 
     billingMethod:
       type: string
@@ -1224,7 +1222,7 @@ components:
         Methodology used for billing.
         Possible values are
         * deduct -> The value of the fee is included in the financed amount.
-        * separate -> The value of the fee is not included in the financed amount.
+        * separate -> The value of the fee is not included in the financed amount and will be debited in bulk at the end of the month.
 
     error:
       type: object
