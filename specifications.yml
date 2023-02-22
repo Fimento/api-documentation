@@ -1189,7 +1189,7 @@ components:
         Possible values are
         * monthly-until-paid -> the fee will be capitalised every month until the invoice is paid.
         * on-financing -> the fee is calculated at the moment of financing.
-        * on-payment -> the fee is calculate at the moment the invoice is paid.
+        * on-payment -> the fee is calculated at the moment the invoice is paid.
     
     feeReferenceAmount:
       type: string
@@ -1221,8 +1221,8 @@ components:
       description: |
         Methodology used for billing.
         Possible values are
-        * deduct -> The value of the fee is included in the financed amount.
-        * separate -> The value of the fee is not included in the financed amount and will be debited in bulk at the end of the month.
+        * deduct -> the value of the fee is included in the financed amount.
+        * separate -> the value of the fee is not included in the financed amount and will be debited in bulk at the end of the month.
 
     error:
       type: object
