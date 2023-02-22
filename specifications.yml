@@ -1132,7 +1132,7 @@ components:
           description: "Currency for the credit limit"
         creditInsuranceLimit:
           type: number
-          description: "Credit limit for the insurance"
+          description: "Amount of credit limit that is covered by insurance"
         creditInsuranceLimitCurrency:
           type: string
           description: "Currency for the insurance credit limit"
@@ -1146,7 +1146,7 @@ components:
           description: Amount to be financed
         feeSettings:
           type: array
-          description: "List of settings for the fee"
+          description: "List of fees applied to the order"
           items:
             $ref: "#/components/schemas/feeSetting"
     
