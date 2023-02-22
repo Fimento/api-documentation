@@ -1102,7 +1102,7 @@ components:
         Current decision of an application.
         Possible values are
         * denied -> application is denied and no manual review is necessary.
-        * referred -> application will go through manual review.
+        * referred -> application needs manual review.
         * granted -> application is granted and no manual review is necessary.
         * pending -> application has started the automatic processing.
         * new -> application is new and has not yet started the automatic processing.
@@ -1117,7 +1117,7 @@ components:
         Current decision of an application.
         Possible values are
         * denied -> application is denied and no manual review is necessary.
-        * referred -> application will go through manual review.
+        * referred -> application needs manual review.
         * granted -> application is granted and no manual review is necessary.
 
     termsForCustomerApplication:
