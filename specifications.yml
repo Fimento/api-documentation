@@ -366,8 +366,8 @@ components:
         application/json:
           schema:
             oneOf:
-              - $ref: "#/components/schemas/BodyForCustomerApplication"
-              - $ref: "#/components/schemas/BodyForFinancingApplication"
+              - $ref: "#/components/schemas/bodyForCustomerApplication"
+              - $ref: "#/components/schemas/bodyForFinancingApplication"
           examples:
             "Refer Application":
               value:
@@ -1024,7 +1024,7 @@ components:
             description: Description
             example: Automatic grant
     
-    BodyForCustomerApplication:
+    bodyForCustomerApplication:
       type: object
       required:
         - decision
@@ -1033,11 +1033,11 @@ components:
           $ref: "#/components/schemas/manualDecision"
         decisionReason:
           type: string
-          description: Reason to justify the decision taken. (Look at the examples on the right to understand when it's required)
+          description: Reason for the decision taken.
         terms:
           $ref: "#/components/schemas/termsForCustomerApplication"
 
-    BodyForFinancingApplication:
+    bodyForFinancingApplication:
       type: object
       required:
         - decision
@@ -1046,7 +1046,7 @@ components:
           $ref: "#/components/schemas/manualDecision"
         decisionReason:
           type: string
-          description: Reason to justify the decision taken. (Look at the examples on the right to understand when it's required)
+          description: Reason for the decision taken.
         terms:
           $ref: "#/components/schemas/termsForFinancingApplication"
           
