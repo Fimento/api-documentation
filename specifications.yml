@@ -47,7 +47,7 @@ paths:
     post:
       tags:
       - Factoring endpoints
-      summary: Financer payment registration
+      summary: Payment registration
       parameters:
       - name: orderId
         in: path
@@ -55,7 +55,7 @@ paths:
         required: true
         schema:
           type: string
-      description: Register a payment for an order with a financer role
+      description: Register a payment for an order as either a financer user or a merchant user
       requestBody:
         $ref: "#/components/requestBodies/registerPayment"
       responses:
@@ -73,6 +73,27 @@ paths:
           $ref: "#/components/responses/serverError"
       security:
       - oAuth2ClientCredentials: []
+
+    /upload/payment-file: # This is a duplicate of the previous endpoint
+    post:
+      tags:
+      - Payments
+      summary: Register payments through a file as either a financer user or a merchant user
+      requestBody:
+        $ref: "#/components/requestBodies/registerPayments"
+      responses:
+        200:
+          $ref: "#/components/responses/paymentsRegistrationSummary"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        404:
+          $ref: "#/components/responses/notFoundError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+        - oAuth2ClientCredentials: []
 
   /application/customer:
     post:
