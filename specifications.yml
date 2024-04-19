@@ -42,6 +42,37 @@ paths:
           $ref: "#/components/responses/serverError"
       security:
       - oAuth2ClientCredentials: []
+      
+  /order/{orderId}/payment:
+    post:
+      tags:
+      - Factoring endpoints
+      summary: Financer payment registration
+      parameters:
+      - name: orderId
+        in: path
+        description: Order's id
+        required: true
+        schema:
+          type: string
+      description: Register a payment for an order with a financer role
+      requestBody:
+        $ref: "#/components/requestBodies/registerPayment"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+      - oAuth2ClientCredentials: []
 
   /application/customer:
     post:
@@ -367,6 +398,34 @@ components:
           schema:
             type: string
             format: binary
+    
+    registerPayment:
+      required: true
+      description: Data to register payment
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              bankReferenceId: 
+                type: string
+                description: Bank reference id
+                example: '63b597c72e7e42972e5dec23'
+              transactionDate:
+                type: string
+                description: Payment date
+                format: date
+                example: '2022-02-02'
+              transactionAmount:
+                type: number
+                description: Payment amount
+                example: 1000
+              currency:
+                $ref: "#/components/schemas/currency"
+              payerName:
+                type: string
+                description: Name of the payer
+                example: 'Sample company'
 
     confirmOrder:
       required: true
