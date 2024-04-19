@@ -23,6 +23,26 @@ servers:
   description: Staging server
 
 paths:
+  /order:
+    post:
+      tags:
+      - Factoring endpoints
+      summary: Create an order
+      description: Create an order
+      requestBody:
+        $ref: "#/components/requestBodies/createOrder"
+      responses:
+        200:
+          $ref: "#/components/responses/orderGetSuccess"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+      - oAuth2ClientCredentials: []
+
   /application/customer:
     post:
       tags:
@@ -286,7 +306,7 @@ paths:
       security:
         - oAuth2ClientCredentials: []
 
-  /order/:orderId/payment-plan:
+  /order/{orderId}/payment-plan:
     get:
       tags:
       - Order endpoints
@@ -368,6 +388,14 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/return"
+    
+    createOrder:
+      required: true
+      description: Data to create order
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/orderData"
 
 
   responses:
@@ -802,15 +830,79 @@ components:
           items:
             $ref: "#/components/schemas/articleOfOrder"
     
-    
-
+    orderData:
+      type: object
+      properties:
+        sellerId:
+          type: string
+          description: Merchant id
+          example: "63b597c72e7e42972e5dec23"
+        debtorId:
+          type: string
+          description: Customer id
+          example: "63b597c72e7e42972e5dec23"
+        createdAt:
+          type: string
+          description: Creation date of order
+          format: date
+          example: "2022-02-02"
+        activationDate:
+          type: string
+          description: Activation date of order
+          format: date
+          example: "2022-02-02"
+        currency:
+          $ref: "#/components/schemas/currency"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/item"
+        isPrepaid:
+          type: boolean
+          description: If the order is prepaid or not
+        marketplaceReferenceId:
+          type: string
+          description: Reference id of the order in the marketplace
+          example: "234578169728"
+        termsOfPayment:
+          type: number
+          description: Number of days before the invoice expires.
+          example: 30
+        shouldRoundInvoiceAmount:
+          type: boolean
+          description: If the invoice amount should be rounded or not
+        issueDate:
+          type: string
+          description: Issue date of invoice
+          format: date
+          example: "2022-02-02"
+        orderReferenceNumber:
+          type: string
+          description: Reference number of order
+          example: "234578169728"
+        paymentReference:
+          type: string
+          description: Payment reference number of order to be used when paying order
+          example: "234578169728"
+        isForborne:
+          type: boolean
+          description: If the order is forborne or not
+        financialProduct:
+          $ref: "#/components/schemas/financialProduct"
+        labelIds:
+          type: array
+          description: List of labels object ids
+          items:
+            type: string
+            example: "63b597c72e7e42972e5dec23"
+          
     customer:
       type: object
       properties:
-      id:
-        type: string
-        description: Customer id
-        example: "63b597c72e7e42972e5dec23"
+        id:
+          type: string
+          description: Customer id
+          example: "63b597c72e7e42972e5dec23"
     
     article:
       type: object
@@ -1052,6 +1144,20 @@ components:
         * adjustment -> the transaction is an adjustment done by the system.
         * internal -> the transaction is an internal transaction within the system between two accounts.
 
+    financialProduct:
+      type: string
+      enum:
+        - 'undisclosed-factoring-recoursing'
+        - 'undisclosed-factoring-non-recoursing'
+        - 'disclosed-factoring'
+        - 'disclosed-factoring-recoursing'
+      description: |
+        Financial product.
+        Possible values are
+        * undisclosed-factoring-recoursing -> the financial product is undisclosed factoring with recoursing.
+        * undisclosed-factoring-non-recoursing -> the financial product is undisclosed factoring without recoursing.
+        * disclosed-factoring -> the financial product is disclosed factoring without recoursing.
+        * disclosed-factoring-recoursing -> the financial product is disclosed factoring with recoursing.
 
     currency:
       type: string
