@@ -32,9 +32,12 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          application/x-www-form-urlencoded:
             schema:
               type: object
+              required:
+                - username
+                - password
               properties:
                 username:
                   type: string
@@ -180,7 +183,7 @@ paths:
       security:
       - oAuth2ClientCredentials: []
 
-    /order:
+  /order:
     post:
       tags:
       - Order endpoints
@@ -383,14 +386,6 @@ components:
           schema:
             $ref: "#/components/schemas/reminder"
 
-    createOrderApplication:
-      required: true
-      description: New Application Data
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/orderApplication"
-
     createCustomerApplication:
       required: true
       description: New customer Data
@@ -407,6 +402,10 @@ components:
           schema:
             type: string
             format: binary
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          schema:
+            type: string
+            format: binary
     
     registerPayment:
       required: true
@@ -415,6 +414,12 @@ components:
         application/json:
           schema:
             type: object
+            required: 
+            - bankReferenceId
+            - transactionDate
+            - transactionAmount
+            - currency
+            - payerName
             properties:
               bankReferenceId: 
                 type: string
@@ -467,6 +472,31 @@ components:
 
 
   responses:
+    authSuccess:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              pending:
+                type: boolean
+                example: false
+              data:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Access token
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJuYW1lIn0.eyJpYXQiOjE1MTYyMzkwMjJ9.3zZ9"
+                  refreshToken:
+                    type: string
+                    description: Refresh token
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJuYW1lIn0.eyJpYXQiOjE1MTYyMzkwMjJ9.3zZ9"
+
     generateReminderSuccess:
       description: Successful operation
       content:
@@ -578,58 +608,54 @@ components:
             - debt-collection
             - late
 
-    orderApplication:
-      type: object
-      required:
-      - items
-      - customerId
-      - currency
-      - reference
-      properties:
-        items:
-          type: array
-          items:
-            $ref: "#/components/schemas/item"
-        customerId:
-          type: string
-          description: Id of customer making the purchase
-          example: "63b597c72e7e42972e5dec43"
-        currency:
-          $ref: "#/components/schemas/currency"
-        reference:
-          type: string
-          description: Unique reference/identifier for the order that is communicated to the customer
-          example: 'A fancy reference'
-
     item:
       type: object
       required:
-      - price
-      - quantity
-      - name
-      - vatPercentage
-      - unit
+      - amount
+      - description
       properties:
-        price:
+        amount:
           type: number
-          description: Total price for all the items, including VAT
+          description: Total amount for all the items, including VAT
           example: 123
-        quantity:
-          type: number
-          description: Number of item(s)
-          example: 2
         unit:
           type: string
           description: Unit for the quantity of the item.
           example: kg
-        name:
+        description:
           type: string
-          description: Name of item
-          example: Article
+          description: Item description
+          example: 'This is a description'
         vatPercentage:
           type: number
           description: Percentage of VAT applied on the item
           example: 25
+        vatAmount:
+          type: number
+          description: Amount of VAT applied on the item
+          example: 50
+        feeType:
+          type: string
+          description: Fee type of the item
+          example: 'item'
+        date:
+          type: string
+          description: Item creation date
+        transactionDetails:
+          type: object
+          properties:
+            deliveryQuantity:
+              type: number
+              description: Delivery quantity of the item
+              example: 1
+            unit:
+              type: string
+              description: Unit for the quantity of the item.
+              example: kg
+            articleNumber:
+              type: string
+              description: Reference number of the article
+              example: '123456789'
 
     customerApplication:
       type: object
@@ -679,27 +705,6 @@ components:
           type: string
           description: Additional message
           example: Returning one computer
-
-    authSuccess:
-      type: object
-      properties:
-        success:
-          type: boolean
-          example: true
-        pending:
-          type: boolean
-          example: false
-        data:
-          type: object
-          properties:
-            token:
-              type: string
-              description: Access token
-              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJuYW1lIn0.eyJpYXQiOjE1MTYyMzkwMjJ9.3zZ9"
-            refreshToken:
-              type: string
-              description: Refresh token
-              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJuYW1lIn0.eyJpYXQiOjE1MTYyMzkwMjJ9.3zZ9"
 
     orderGetSuccess:
       $ref: "#/components/schemas/order"
@@ -995,6 +1000,15 @@ components:
         
     orderData:
       type: object
+      required:
+        - sellerId
+        - debtorId
+        - createdAt
+        - currency
+        - items
+        - termsOfPayment
+        - orderReferenceNumber
+        - financialProduct
       properties:
         sellerId:
           type: string
@@ -1422,7 +1436,7 @@ components:
     decisionData:
       type: object
       properties:
-        decision: # Should this be renamed?
+        decision:
           $ref: "#/components/schemas/decision"
         date:
           type: string
