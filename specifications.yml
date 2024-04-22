@@ -60,7 +60,7 @@ paths:
         $ref: "#/components/requestBodies/registerPayment"
       responses:
         200:
-          description: Success
+          description: Successful operation
           content:
             application/json:
               schema:
@@ -74,16 +74,49 @@ paths:
       security:
       - oAuth2ClientCredentials: []
 
-    /upload/payment-file: # This is a duplicate of the previous endpoint
-    post:
+  /factoring-account/{factoringAccountId}:
+    get:
       tags:
-      - Payments
-      summary: Register payments through a file as either a financer user or a merchant user
-      requestBody:
-        $ref: "#/components/requestBodies/registerPayments"
+      - Factoring endpoints
+      summary: Get a factoring account
+      description: Fetch a factoring account
+      parameters:
+      - name: factoringAccountId
+        in: path
+        description: Factoring account's id
+        required: true
+        schema:
+          type: string
       responses:
         200:
-          $ref: "#/components/responses/paymentsRegistrationSummary"
+          $ref: "#/components/responses/factoringAccountGetSuccess"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        404:
+          $ref: "#/components/responses/notFoundError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+        - oAuth2ClientCredentials: []
+
+  /financing-application/{financingApplicationId}:
+    get:
+      tags:
+      - Factoring endpoints
+      summary: Get a financing application
+      description: Fetch a financing application
+      parameters:
+      - name: financingApplicationId
+        in: path
+        description: Financing application's id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          $ref: "#/components/responses/financingApplicationGetSuccess"
         400:
           $ref: "#/components/responses/dataError"
         401:
@@ -140,7 +173,7 @@ paths:
         500:
           $ref: "#/components/responses/serverError"
       security:
-      - oAuth2ClientCredentials: []
+        - oAuth2ClientCredentials: []
 
   /application/order:
     post:
@@ -160,7 +193,7 @@ paths:
         500:
           $ref: "#/components/responses/serverError"
       security:
-      - oAuth2ClientCredentials: []
+        - oAuth2ClientCredentials: []
 
   /application/order/{applicationId}/confirm:
     put:
@@ -187,7 +220,7 @@ paths:
         500:
           $ref: "#/components/responses/serverError"
       security:
-      - oAuth2ClientCredentials: []
+        - oAuth2ClientCredentials: []
 
   /application/order/{applicationId}:
     get:
@@ -341,7 +374,7 @@ paths:
     post:
       tags:
       - Payments
-      summary: Register payments
+      summary: Register payments through a file as either a financer user or a merchant user
       requestBody:
         $ref: "#/components/requestBodies/registerPayments"
       responses:
@@ -492,7 +525,7 @@ components:
                 example: '63b597c72e7e42972e5dec23'
 
     generateReminderSuccess:
-      description: Sucessful operation
+      description: Successful operation
       content:
         application/json:
           schema:
@@ -511,6 +544,20 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/orderGetSuccess"
+            
+    factoringAccountGetSuccess:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/factoringAccountGetSuccess"
+    
+    financingApplicationGetSuccess:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/financingApplicationGetSuccess"
 
     customerGetSuccess:
       description: Successful operation
@@ -759,6 +806,12 @@ components:
 
     orderGetSuccess:
       $ref: "#/components/schemas/order"
+      
+    factoringAccountGetSuccess:
+      $ref: "#/components/schemas/factoringAccount"
+    
+    financingApplicationGetSuccess:
+      $ref: "#/components/schemas/financingApplication"
 
     paymentPlanGetSuccess:
       type: array
@@ -866,9 +919,17 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/invoice"
+        sellerId:
+          type: string
+          description: Merchant id
+          example: "63b597c72e7e42972e5dec23"
         debtorId:
           type: string
           description: Customer id
+          example: "63b597c72e7e42972e5dec23"
+        creditorId:
+          type: string
+          description: Creditor id
           example: "63b597c72e7e42972e5dec23"
         orderReferenceNumber:
           type: string
@@ -909,7 +970,39 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/articleOfOrder"
-    
+        hasRecoursed:
+          type: boolean
+          description: If the order has been recoursed or not
+        financing:
+          type: object
+          properties:
+            financedBy:
+              type: string
+              description: Id of the financer
+              example: "63b597c72e7e42972e5dec23"
+            amount:
+              type: number
+              description: Financed amount
+              example: 10000
+            financedAt:
+              type: string
+              description: Date of financing
+              format: date
+              example: "2022-02-02"
+            currency:
+              $ref: "#/components/schemas/currency"
+        balance:
+          type: number
+          description: Balance of the order
+          example: 10000
+        exposure:
+          type: number
+          description: Exposure of the order
+          example: 10000
+        isPrepaid:
+          type: boolean
+          description: If the order is prepaid or not
+        
     orderData:
       type: object
       properties:
@@ -975,7 +1068,166 @@ components:
           items:
             type: string
             example: "63b597c72e7e42972e5dec23"
-          
+    
+    factoringAccount:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Factoring account id
+          example: "63b597c72e7e42972e5dec23"
+        transactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/transaction"
+        balance:
+          type: number
+          description: Balance of the account
+          example: 10000
+        accumulatedInterest:
+          type: number
+          description: Accumulated interest of the account
+          example: 100
+        creditorId:
+          type: string
+          description: Creditor id
+          example: "63b597c72e7e42972e5dec23"
+        creditorName: 
+          type: string
+          description: Creditor name
+          example: "Lidion"
+        debtorId:
+          type: string
+          description: Debtor id
+          example: "63b597c72e7e42972e5dec23"
+        currency:
+          $ref: "#/components/schemas/currency"
+        createdAt:
+          type: string
+          description: Creation date of account
+          format: date
+          example: "2022-02-02"
+        feeSettings:
+          $ref: "#/components/schemas/feeSettings"
+        markedToBalanceAt: # Should it be put in doc?
+          type: string
+          description: Date when the account was marked to balance
+          format: date
+          example: "2022-02-02"
+        factoredOrder:
+          type: string
+          description: Factored order id
+          example: "63b597c72e7e42972e5dec23"
+        accountStatus:
+          type: boolean
+          description: Status of factoring account
+          enum:
+          - active
+          - closed
+        financialProduct:
+          $ref: "#/components/schemas/financialProduct"
+    
+    financingApplication:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Financing application id
+          example: "63b597c72e7e42972e5dec23"
+        applicationType:
+          $ref: "#/components/schemas/applicationType"
+        resourceId:
+          type: string
+          description: Related order id
+          example: "63b597c72e7e42972e5dec23"
+        orderReferenceNumber:
+          type: string
+          description: Reference number of order
+          example: "234578169728"
+        financerId:
+          type: string
+          description: Financer id
+          example: "63b597c72e7e42972e5dec23"
+        merchantId:
+          type: string
+          description: Merchant id
+          example: "63b597c72e7e42972e5dec23"
+        issueDate:
+          type: string
+          description: Issue date of invoice
+          format: date
+          example: "2022-02-02"
+        dueDate:
+          type: string
+          description: Due date of invoice
+          format: date
+          example: "2022-02-02"
+        currentDecision:
+          $ref: "#/components/schemas/decision"
+        currentDecisionDate:
+          type: string
+          description: Decision date of current decision
+          format: date
+          example: "2022-02-02"
+        requestedFeeSettings:
+          $ref: "#/components/schemas/feeSettings"
+        requestedFinanceAmount:
+          type: number
+          description: Requested finance amount by the merchant
+          example: 10000
+        requestedTerms:
+          $ref: "#/components/schemas/financingTerms"
+        feeSettings:
+          $ref: "#/components/schemas/feeSettings"
+        financeAmount:
+          type: number
+          description: Financed amount
+          example: 10000
+        terms:
+          $ref: "#/components/schemas/financingTerms"
+        applicationStep:
+          $ref: "#/components/schemas/applicationStep"
+        decisionData:
+          $ref: "#/components/schemas/decisionData"
+        createdAt:
+          type: string
+          description: Creation date of financing application
+          format: date
+          example: "2022-02-02"
+        orderAmount:
+          type: number
+          description: Total amount of the order
+          example: "10000"
+        orderCurrency:
+          $ref: "#/components/schemas/currency"
+        decisionReason:
+          type: string
+          description: Reason for the decision
+          example: "Credit limit exceeded"
+        FinanceFeePercentage:
+          type: number
+          description: Percentage of the finance fee
+          example: 10
+        financeAmountPercentage:
+          type: number
+          description: Percentage of the finance amount
+          example: 10
+        requestedFinanceFeePercentage:
+          type: number
+          description: Percentage of the requested finance fee
+          example: 10
+        requestedFinanceAmountPercentage:
+          type: number
+          description: Percentage of the requested finance amount
+          example: 10
+        pendingPeerReviewRequest:
+          type: number
+          description: Number of pending peer review requests
+          example: 1
+        deniedByPartner:
+          type: boolean
+          description: If the application has been denied by Moank or not
+        
     customer:
       type: object
       properties:
@@ -1180,15 +1432,29 @@ components:
     decisionData:
       type: object
       properties:
-        finalDecision:
+        decision: # Should this be renamed?
           $ref: "#/components/schemas/decision"
-        decisionDetails:
+        date:
+          type: string
+          description: Decision date
+          format: date
+          example: "2022-02-02"
+        results:
           type: array
-          description: List of descriptions that lead the engine to the final decision
+          description: List of rules that lead the engine to the final decision
           items:
-            type: string
-            description: Description
-            example: Automatic grant
+            type: object
+            properties:
+              ruleName:
+                type: string
+                description: Rule name
+                example: "credit-limit"
+              decision:
+                $ref: "#/components/schemas/decision"
+              reason:
+                type: string
+                description: Reason for the decision
+                example: "Credit limit exceeded"
 
     invoiceStatus:
       type: string
@@ -1253,6 +1519,9 @@ components:
         - denied
         - pending
         - new
+        - under-review
+        - m-pending
+        - m-granted
       description: |
         Current decision of an application.
         Possible values are
@@ -1261,6 +1530,146 @@ components:
         * granted -> application is granted and no manual review is necessary.
         * pending -> application has started the automatic processing.
         * new -> application is new and has not yet started the automatic processing.
+        * under-review -> application is under peer review.
+        * m-pending -> application is sent to Moank and under processing.
+        * m-granted -> application is granted by Moank.
+
+    rateType:
+      type: string
+      enum:
+        - flat
+        - variable
+      description: |
+        Type of interest rate.
+        Possible values are
+        * flat -> the interest rate is fixed.
+        * variable -> the interest rate is variable.
+
+    feeTrigger:
+      type: string
+      enum:
+        - 'monthly-until-paid'
+        - 'on-financing'
+        - 'on-payment'
+      description: |
+        Trigger of fee.
+        Possible values are
+        * monthly-until-paid -> the fee is triggered monthly until the order is fully paid.
+        * on-financing -> the fee is triggered when the order is financed.
+        * on-payment -> the fee is triggered when the order is paid.
+
+    feeReferenceAmount:
+      type: string
+      enum:
+        - 'invoice-amount'
+        - 'financed-amount'
+      description: |
+        Reference amount of fee.
+        Possible values are
+        * invoice-amount -> the fee is calculated on the total invoice amount.
+        * financed-amount -> the fee is calculated on the financed amount.
+
+    billingMethod:
+      type: string
+      enum:
+        - 'deduct'
+        - 'separate'
+      description: |
+        Billing method.
+        Possible values are
+        * deduct -> the fee transactions are deducted in factoring account.
+        * separate -> the fee transactions are separated in settlement account.
+
+    feeSettings:
+      type: array
+      items:
+        type: object
+        properties:
+          _id:
+            type: string
+            example: "63da37e01a786fc1b70ed884" 
+          rateType:
+            $ref: "#/components/schemas/rateType"
+          feeTrigger:
+            $ref: "#/components/schemas/feeTrigger"
+          feeReferenceAmount:
+            $ref: "#/components/schemas/feeReferenceAmount"
+          percentageValue:
+            type: number
+            description: Fee percentage value
+            example: 10
+          cap:
+            type: object
+            properties:
+              value:
+                type: number
+                description: Cap value
+                example: 1000
+              currency:
+                $ref: "#/components/schemas/currency"
+          billingMethod:
+            $ref: "#/components/schemas/billingMethod"
+          description:
+            type: string
+            description: Description of the fee
+            example: 'Financing fee'
+          lastCapitalisationDate:
+            type: string
+            description: Last capitalisation date
+            format: date
+            example: "2022-02-02"
+          vatPercentage:
+            type: number
+            description: VAT percentage
+            example: 25
+
+    applicationType:
+      type: string
+      enum:
+        - 'financing'
+        - 'customer'
+      description: |
+        Type of application.
+        Possible values are
+        * financing -> the application is a financing application.
+        * customer -> the application is a customer application.
+
+    applicationStep:
+      type: string
+      enum:
+        - 'created'
+        - 'approved'
+        - 'accepted'
+        - 'signed'
+        - 'confirmed'
+        - 'closed'
+        - 'expired'
+      description: |
+        Current processing step of an application.
+        Possible values are
+        * created -> application is created.
+        * approved -> application is approved.
+        * accepted -> application is accepted.
+        * signed -> application is signed.
+        * confirmed -> application is confirmed.
+        * closed -> application is closed.
+        * expired -> application is expired.
+
+    financingTerms:
+      type: object
+      properties:
+        feeSettings:
+          $ref: "#/components/schemas/feeSettings"
+        financingCurrency:
+          $ref: "#/components/schemas/currency"
+        financeAmount:
+          type: number
+          description: Financed amount
+          example: 10000
+        fxRate:
+          type: number
+          description: Foreign exchange rate
+          example: 10
 
     error:
       type: object
