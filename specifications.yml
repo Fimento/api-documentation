@@ -23,56 +23,34 @@ servers:
   description: Staging server
 
 paths:
-  /order:
+  /authorization/authenticate:
     post:
       tags:
-      - Factoring endpoints
-      summary: Create an order
-      description: Create an order
+      - Authentication
+      summary: Authenticate
+      description: Authenticate a API user
       requestBody:
-        $ref: "#/components/requestBodies/createOrder"
-      responses:
-        200:
-          $ref: "#/components/responses/orderGetSuccess"
-        400:
-          $ref: "#/components/responses/dataError"
-        401:
-          $ref: "#/components/responses/authError"
-        500:
-          $ref: "#/components/responses/serverError"
-      security:
-      - oAuth2ClientCredentials: []
-      
-  /order/{orderId}/payment:
-    post:
-      tags:
-      - Factoring endpoints
-      summary: Payment registration
-      parameters:
-      - name: orderId
-        in: path
-        description: Order's id
         required: true
-        schema:
-          type: string
-      description: Register a payment for an order as either a financer user or a merchant user
-      requestBody:
-        $ref: "#/components/requestBodies/registerPayment"
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Username
+                  example: "username"
+                password:
+                  type: string
+                  description: Password
+                  example: "password"
       responses:
         200:
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-        400:
-          $ref: "#/components/responses/dataError"
+          $ref: "#/components/responses/authSuccess"
         401:
           $ref: "#/components/responses/authError"
         500:
           $ref: "#/components/responses/serverError"
-      security:
-      - oAuth2ClientCredentials: []
 
   /factoring-account/{factoringAccountId}:
     get:
@@ -101,16 +79,16 @@ paths:
       security:
         - oAuth2ClientCredentials: []
 
-  # /financing-application/{financingApplicationId}:
+  # /financing-application/{applicationId}: # Do not release for now
   #   get:
   #     tags:
   #     - Factoring endpoints
   #     summary: Get a financing application
   #     description: Fetch a financing application
   #     parameters:
-  #     - name: financingApplicationId
+  #     - name: applicationId
   #       in: path
-  #       description: Financing application's id
+  #       description: Application's id
   #       required: true
   #       schema:
   #         type: string
@@ -128,7 +106,7 @@ paths:
   #     security:
   #       - oAuth2ClientCredentials: []
 
-  # /application/customer: # see if use the real path 
+  # /customer-application/create: # We need to update request body and response
   #   post:
   #     tags:
   #     - Application endpoints
@@ -148,86 +126,12 @@ paths:
   #     security:
   #       - oAuth2ClientCredentials: []
 
-  # /application/customer/{applicationId}: # see if use the real path
-  #   get:
-  #     tags:
-  #     - Application endpoints
-  #     summary: Get a customer
-  #     description: Fetch a customer
-  #     parameters:
-  #     - name: applicationId
-  #       in: path
-  #       description: Application's id
-  #       required: true
-  #       schema:
-  #         type: string
-  #     responses:
-  #       200:
-  #         $ref: "#/components/responses/customerGetSuccess"
-  #       400:
-  #         $ref: "#/components/responses/dataError"
-  #       401:
-  #         $ref: "#/components/responses/authError"
-  #       404:
-  #         $ref: "#/components/responses/notFoundError"
-  #       500:
-  #         $ref: "#/components/responses/serverError"
-  #     security:
-  #       - oAuth2ClientCredentials: []
-
-  # /application/order: # remove
-  #   post:
-  #     tags:
-  #     - Application endpoints
-  #     summary: Create an order application
-  #     description: Send a new application for an order to be created in the system, and run decision rules
-  #     requestBody:
-  #       $ref: "#/components/requestBodies/createOrderApplication"
-  #     responses:
-  #       200:
-  #         $ref: "#/components/responses/orderApplicationGetSuccess"
-  #       400:
-  #         $ref: "#/components/responses/dataError"
-  #       401:
-  #         $ref: "#/components/responses/authError"
-  #       500:
-  #         $ref: "#/components/responses/serverError"
-  #     security:
-  #       - oAuth2ClientCredentials: []
-
-  # /application/order/{applicationId}/confirm: # remove
-  #   put:
-  #     tags:
-  #     - Application endpoints
-  #     summary: Confirm an order application
-  #     description: This endpoint can be used to notify Fimento when the customer decides to confirm an application and generate the order in Fimento system.
-  #     parameters:
-  #     - name: applicationId
-  #       in: path
-  #       description: Application's id
-  #       required: true
-  #       schema:
-  #         type: string
-  #     requestBody:
-  #       $ref: "#/components/requestBodies/confirmOrder"
-  #     responses:
-  #       200:
-  #         $ref: "#/components/responses/markAsConfirmedSuccess"
-  #       400:
-  #         $ref: "#/components/responses/dataError"
-  #       401:
-  #         $ref: "#/components/responses/authError"
-  #       500:
-  #         $ref: "#/components/responses/serverError"
-  #     security:
-  #       - oAuth2ClientCredentials: []
-
-  # /application/order/{applicationId}: # remove
+  /customer-application/{applicationId}: # We need to update response 
     get:
       tags:
       - Application endpoints
-      summary: Get an order application
-      description: Fetch an application
+      summary: Get a customer
+      description: Fetch a customer
       parameters:
       - name: applicationId
         in: path
@@ -237,7 +141,7 @@ paths:
           type: string
       responses:
         200:
-          $ref: "#/components/responses/orderApplicationGetSuccess"
+          $ref: "#/components/responses/customerGetSuccess"
         400:
           $ref: "#/components/responses/dataError"
         401:
@@ -247,7 +151,7 @@ paths:
         500:
           $ref: "#/components/responses/serverError"
       security:
-      - oAuth2ClientCredentials: []
+        - oAuth2ClientCredentials: []
 
   /order/{orderId}:
     get:
@@ -271,6 +175,57 @@ paths:
           $ref: "#/components/responses/authError"
         404:
           $ref: "#/components/responses/notFoundError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+      - oAuth2ClientCredentials: []
+
+    /order:
+    post:
+      tags:
+      - Order endpoints
+      summary: Create an order
+      description: Create an order
+      requestBody:
+        $ref: "#/components/requestBodies/createOrder"
+      responses:
+        200:
+          $ref: "#/components/responses/orderGetSuccess"
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
+        500:
+          $ref: "#/components/responses/serverError"
+      security:
+      - oAuth2ClientCredentials: []
+      
+  /order/{orderId}/payment:
+    post:
+      tags:
+      - Order endpoints
+      summary: Payment registration
+      parameters:
+      - name: orderId
+        in: path
+        description: Order's id
+        required: true
+        schema:
+          type: string
+      description: Register a payment for an order as either a financer user or a merchant user
+      requestBody:
+        $ref: "#/components/requestBodies/registerPayment"
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+        400:
+          $ref: "#/components/responses/dataError"
+        401:
+          $ref: "#/components/responses/authError"
         500:
           $ref: "#/components/responses/serverError"
       security:
@@ -512,31 +467,12 @@ components:
 
 
   responses:
-    markAsConfirmedSuccess:
-      description: Successful operation
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              orderId:
-                type: string
-                description: The new order Id
-                example: '63b597c72e7e42972e5dec23'
-
     generateReminderSuccess:
       description: Successful operation
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/dunning"
-
-    orderApplicationGetSuccess:
-      description: Successful operation
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/orderApplicationGetSuccess"
 
     orderGetSuccess:
       description: Successful operation
@@ -744,65 +680,26 @@ components:
           description: Additional message
           example: Returning one computer
 
-    orderApplicationGetSuccess:
+    authSuccess:
       type: object
       properties:
-        id:
-          type: string
-          description: Application id
-          example: "63b597c72e7e42972e5dec23"
-        pricing:
-          type: array
-          items:
-            type: object
-            required:
-              - paymentMethod
-              - amount
-              - termsOfPayment
-            properties:
-              id:
-                type: string
-                description: Payment method id
-                example: "63b597c72e7e42972e5dec23"
-              paymentMethod:
-                type: string
-                description: |
-                  Type of payment method.
-                  Possible values are
-                  * single-invoice -> The order total amount will be invoiced all at once.
-                  * instalments -> The order will be recuringly invoiced over a period of time
-                example: 'single-invoice'
-              amount:
-                type: number
-                description: Total debt to be repaid
-                example: 5000
-              nominalRate:
-                type: number
-                description: Yearly interest rate, in percent
-                example: 10
-              termsOfPayment:
-                type: number
-                description: Number of days before the invoice expires. Fixed to 30 days at the moment
-                example: 30
-              numberOfInstalments:
-                type: number
-                description: Number of payments expected to repay the debt
-                example: 6
-              annuityAmount:
-                type: number
-                description: Reccuring amount to paid to repay the full debt
-                example: 926
-              startupFee:
-                type: number
-                description: Fee amount to include in the annuity calculation
-                example: 395
-        articles:
-          type: array
-          items:
-            $ref: "#/components/schemas/article"
-
-        decisionData:
-          $ref: "#/components/schemas/decisionData"
+        success:
+          type: boolean
+          example: true
+        pending:
+          type: boolean
+          example: false
+        data:
+          type: object
+          properties:
+            token:
+              type: string
+              description: Access token
+              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJuYW1lIn0.eyJpYXQiOjE1MTYyMzkwMjJ9.3zZ9"
+            refreshToken:
+              type: string
+              description: Refresh token
+              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJuYW1lIn0.eyJpYXQiOjE1MTYyMzkwMjJ9.3zZ9"
 
     orderGetSuccess:
       $ref: "#/components/schemas/order"
@@ -1057,7 +954,7 @@ components:
           description: Date of purchase
           format: date
           example: "2022-02-02"
-        labelIds: # Should this be put in doc?
+        labelIds:
           type: array
           description: List of labels object ids
           items:
@@ -1077,7 +974,7 @@ components:
                 type: string
                 description: Label name
                 example: "Label name"
-              color: # Should this be put in doc?
+              color:
                 type: string
                 description: Label color
                 example: "#FF0000"
@@ -1091,8 +988,10 @@ components:
           description: If the order should generate an invoice or not
         partnerFinancing:
           $ref: "#/components/schemas/partnerFinancing"
-        # extraInfo: # Should this be put in doc?
-        #   $ref: "#/components/schemas/extraInfo"
+        extraInfo:
+          type: object
+          description: List of extra information to provide for the decision process based on the agreement
+          
         
     orderData:
       type: object
