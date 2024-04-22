@@ -101,128 +101,128 @@ paths:
       security:
         - oAuth2ClientCredentials: []
 
-  /financing-application/{financingApplicationId}:
-    get:
-      tags:
-      - Factoring endpoints
-      summary: Get a financing application
-      description: Fetch a financing application
-      parameters:
-      - name: financingApplicationId
-        in: path
-        description: Financing application's id
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          $ref: "#/components/responses/financingApplicationGetSuccess"
-        400:
-          $ref: "#/components/responses/dataError"
-        401:
-          $ref: "#/components/responses/authError"
-        404:
-          $ref: "#/components/responses/notFoundError"
-        500:
-          $ref: "#/components/responses/serverError"
-      security:
-        - oAuth2ClientCredentials: []
+  # /financing-application/{financingApplicationId}:
+  #   get:
+  #     tags:
+  #     - Factoring endpoints
+  #     summary: Get a financing application
+  #     description: Fetch a financing application
+  #     parameters:
+  #     - name: financingApplicationId
+  #       in: path
+  #       description: Financing application's id
+  #       required: true
+  #       schema:
+  #         type: string
+  #     responses:
+  #       200:
+  #         $ref: "#/components/responses/financingApplicationGetSuccess"
+  #       400:
+  #         $ref: "#/components/responses/dataError"
+  #       401:
+  #         $ref: "#/components/responses/authError"
+  #       404:
+  #         $ref: "#/components/responses/notFoundError"
+  #       500:
+  #         $ref: "#/components/responses/serverError"
+  #     security:
+  #       - oAuth2ClientCredentials: []
 
-  /application/customer:
-    post:
-      tags:
-      - Application endpoints
-      summary: Create a customer
-      description: Create a customer and return its credit information. If a customer with the defined orgNumber has already been added to the system, it returns the existing one.
-      requestBody:
-        $ref: "#/components/requestBodies/createCustomerApplication"
-      responses:
-        200:
-          $ref: "#/components/responses/customerGetSuccess"
-        400:
-          $ref: "#/components/responses/dataError"
-        401:
-          $ref: "#/components/responses/authError"
-        500:
-          $ref: "#/components/responses/serverError"
-      security:
-        - oAuth2ClientCredentials: []
+  # /application/customer: # see if use the real path 
+  #   post:
+  #     tags:
+  #     - Application endpoints
+  #     summary: Create a customer
+  #     description: Create a customer and return its credit information. If a customer with the defined orgNumber has already been added to the system, it returns the existing one.
+  #     requestBody:
+  #       $ref: "#/components/requestBodies/createCustomerApplication"
+  #     responses:
+  #       200:
+  #         $ref: "#/components/responses/customerGetSuccess"
+  #       400:
+  #         $ref: "#/components/responses/dataError"
+  #       401:
+  #         $ref: "#/components/responses/authError"
+  #       500:
+  #         $ref: "#/components/responses/serverError"
+  #     security:
+  #       - oAuth2ClientCredentials: []
 
-  /application/customer/{applicationId}:
-    get:
-      tags:
-      - Application endpoints
-      summary: Get a customer
-      description: Fetch a customer
-      parameters:
-      - name: applicationId
-        in: path
-        description: Application's id
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          $ref: "#/components/responses/customerGetSuccess"
-        400:
-          $ref: "#/components/responses/dataError"
-        401:
-          $ref: "#/components/responses/authError"
-        404:
-          $ref: "#/components/responses/notFoundError"
-        500:
-          $ref: "#/components/responses/serverError"
-      security:
-        - oAuth2ClientCredentials: []
+  # /application/customer/{applicationId}: # see if use the real path
+  #   get:
+  #     tags:
+  #     - Application endpoints
+  #     summary: Get a customer
+  #     description: Fetch a customer
+  #     parameters:
+  #     - name: applicationId
+  #       in: path
+  #       description: Application's id
+  #       required: true
+  #       schema:
+  #         type: string
+  #     responses:
+  #       200:
+  #         $ref: "#/components/responses/customerGetSuccess"
+  #       400:
+  #         $ref: "#/components/responses/dataError"
+  #       401:
+  #         $ref: "#/components/responses/authError"
+  #       404:
+  #         $ref: "#/components/responses/notFoundError"
+  #       500:
+  #         $ref: "#/components/responses/serverError"
+  #     security:
+  #       - oAuth2ClientCredentials: []
 
-  /application/order:
-    post:
-      tags:
-      - Application endpoints
-      summary: Create an order application
-      description: Send a new application for an order to be created in the system, and run decision rules
-      requestBody:
-        $ref: "#/components/requestBodies/createOrderApplication"
-      responses:
-        200:
-          $ref: "#/components/responses/orderApplicationGetSuccess"
-        400:
-          $ref: "#/components/responses/dataError"
-        401:
-          $ref: "#/components/responses/authError"
-        500:
-          $ref: "#/components/responses/serverError"
-      security:
-        - oAuth2ClientCredentials: []
+  # /application/order: # remove
+  #   post:
+  #     tags:
+  #     - Application endpoints
+  #     summary: Create an order application
+  #     description: Send a new application for an order to be created in the system, and run decision rules
+  #     requestBody:
+  #       $ref: "#/components/requestBodies/createOrderApplication"
+  #     responses:
+  #       200:
+  #         $ref: "#/components/responses/orderApplicationGetSuccess"
+  #       400:
+  #         $ref: "#/components/responses/dataError"
+  #       401:
+  #         $ref: "#/components/responses/authError"
+  #       500:
+  #         $ref: "#/components/responses/serverError"
+  #     security:
+  #       - oAuth2ClientCredentials: []
 
-  /application/order/{applicationId}/confirm:
-    put:
-      tags:
-      - Application endpoints
-      summary: Confirm an order application
-      description: This endpoint can be used to notify Fimento when the customer decides to confirm an application and generate the order in Fimento system.
-      parameters:
-      - name: applicationId
-        in: path
-        description: Application's id
-        required: true
-        schema:
-          type: string
-      requestBody:
-        $ref: "#/components/requestBodies/confirmOrder"
-      responses:
-        200:
-          $ref: "#/components/responses/markAsConfirmedSuccess"
-        400:
-          $ref: "#/components/responses/dataError"
-        401:
-          $ref: "#/components/responses/authError"
-        500:
-          $ref: "#/components/responses/serverError"
-      security:
-        - oAuth2ClientCredentials: []
+  # /application/order/{applicationId}/confirm: # remove
+  #   put:
+  #     tags:
+  #     - Application endpoints
+  #     summary: Confirm an order application
+  #     description: This endpoint can be used to notify Fimento when the customer decides to confirm an application and generate the order in Fimento system.
+  #     parameters:
+  #     - name: applicationId
+  #       in: path
+  #       description: Application's id
+  #       required: true
+  #       schema:
+  #         type: string
+  #     requestBody:
+  #       $ref: "#/components/requestBodies/confirmOrder"
+  #     responses:
+  #       200:
+  #         $ref: "#/components/responses/markAsConfirmedSuccess"
+  #       400:
+  #         $ref: "#/components/responses/dataError"
+  #       401:
+  #         $ref: "#/components/responses/authError"
+  #       500:
+  #         $ref: "#/components/responses/serverError"
+  #     security:
+  #       - oAuth2ClientCredentials: []
 
-  /application/order/{applicationId}:
+  # /application/order/{applicationId}: # remove
     get:
       tags:
       - Application endpoints
@@ -1002,6 +1002,97 @@ components:
         isPrepaid:
           type: boolean
           description: If the order is prepaid or not
+        mainInvoiceIssueDate:
+          type: string
+          description: Issue date of main invoice
+          format: date
+          example: "2022-02-02"
+        mainInvoiceDueDate:
+          type: string
+          description: Due date of main invoice
+          format: date
+          example: "2022-02-02"
+        reminderCounter:
+          type: number
+          description: Number of reminders sent
+          example: 1
+        invoiceSettings:
+          $ref: "#/components/schemas/invoiceSettings"
+        comments: 
+          type: array
+          description: List of comments
+          items:
+            type: string
+            example: "This is a comment"
+        isForborne:
+          type: boolean
+          description: If the order is forborne or not
+        financialProduct:
+          $ref: "#/components/schemas/financialProduct"
+        applicationId:
+          type: string
+          description: Connected financing application id
+          example: "63b597c72e7e42972e5dec23"
+        createdAt:
+          type: string
+          description: Creation date of order
+          format: date
+          example: "2022-02-02"
+        creationSource:
+          type: string
+          description: Source of order creation
+          example: "manual"
+        applicationStatus:
+          $ref: "#/components/schemas/decision"
+        requestedTerms:
+          $ref: "#/components/schemas/financingTerms"
+        terms:
+          $ref: "#/components/schemas/financingTerms"
+        vouchers:
+          type: array
+          items:
+            $ref: "#/components/schemas/voucher"
+        purchasedAt:
+          type: string
+          description: Date of purchase
+          format: date
+          example: "2022-02-02"
+        labelIds: # Should this be put in doc?
+          type: array
+          description: List of labels object ids
+          items:
+            type: string
+            example: "63b597c72e7e42972e5dec23"
+        labels:
+          type: array
+          description: List of labels
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Label id
+                example: "63b597c72e7e42972e5dec23"
+              name:
+                type: string
+                description: Label name
+                example: "Label name"
+              color: # Should this be put in doc?
+                type: string
+                description: Label color
+                example: "#FF0000"
+        recourseDate:
+          type: string
+          description: Date of recourse
+          format: date
+          example: "2022-02-02"
+        shouldGenerateInvoice:
+          type: boolean
+          description: If the order should generate an invoice or not
+        partnerFinancing:
+          $ref: "#/components/schemas/partnerFinancing"
+        # extraInfo: # Should this be put in doc?
+        #   $ref: "#/components/schemas/extraInfo"
         
     orderData:
       type: object
@@ -1670,6 +1761,170 @@ components:
           type: number
           description: Foreign exchange rate
           example: 10
+
+    voucher:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: User id
+          example: "63b597c72e7e42972e5dec23"
+        date:
+          type: string
+          description: Date of voucher
+          format: date
+          example: "2022-02-02"
+        revertedItems:
+          type: array
+          description: List of reverted items
+          items:
+            $ref: "#/components/schemas/item"
+
+    invoiceSettings:
+      type: object
+      properties:
+        shouldSendInvoices:
+          type: boolean
+          description: If the system should automatically send invoices to the customer
+        invoiceLayout:
+          type: string
+          description: Layout of the invoice
+          example: "invoice_default"
+        emailLayout:
+          type: string
+          description: Layout of the email
+          example: "invoice_default"
+        invoiceLabel:
+          type: string
+          description: Label of the invoice
+          example: "Invoice"
+        iban:
+          type: string
+          description: IBAN of the creditor
+          example: "NO123456789"
+        bic:
+          type: string
+          description: BIC of the creditor
+          example: "DABAIE2D"
+        bankgiro:
+          type: string
+          description: Bankgiro of the creditor
+          example: "123456789"
+        invoiceEmail:
+          type: string
+          description: Email of the creditor
+          example: "example@company.com"
+        invoiceAddress:
+          type: object
+          properties:
+            streetAddress:
+              type: string
+              description: Street address of the creditor's location
+              example: "Street 1"
+            Additional street address:
+              type: string
+              description: Additional street address of the creditor's location
+              example: "Street 2"
+            town:
+              type: string
+              description: Town of the creditor's location
+              example: "Town"
+            postcode:
+              type: string
+              description: Postcode of the creditor's location
+              example: "1234"
+        dunningSettings:
+          $ref: "#/components/schemas/dunningSettings"
+        enableAutomaticDunning:
+          type: boolean
+          description: If the system should automatically send reminders to the customer
+        lateInterestRate:
+          type: number
+          description: Interest rate for late payments
+          example: 10
+        invoiceFee:
+          type: number
+          description: Fee for the invoice
+          example: 60
+        denunciationText:
+          type: string
+          description: Denunciation text
+          example: "Denunciation text"
+        displaySenderId:
+          type: string
+          description: Sender id displayed in the invoice
+          example: "63b597c72e7e42972e5dec23"
+    
+    dunningSettings:
+      type: object
+      properties:
+        feeAmount:
+          type: number
+          description: Fee for the reminder
+          example: 60
+        issueDay:
+          type: number
+          description: Days for sending reminder after invoice expiry date
+          example: 10
+        termsOfPayment:
+          type: number
+          description: Number of days before the reminder expires
+          example: 30
+        description:
+          type: string
+          description: Description for reminder fee
+          example: "Reminder fee"
+        emailLayout:
+          type: string
+          description: Layout of the email
+          example: "reminder_default"
+        reminderLayout:
+          type: string
+          description: Layout of the reminder
+          example: "reminder_default"
+        
+    partnerFinancing:
+      type: object
+      properties:
+          partnerId:
+            type: string
+            description: Partner id
+            example: "63b597c72e7e42972e5dec23"
+          sentToPartnerAt:
+            type: string
+            description: Date when the order was sent to the partner
+            format: date
+            example: "2022-02-02"
+          claimId:
+            type: string
+            description: Order id in partner's system
+            example: "63b597c72e7e42972e5dec23"
+          status:
+            type: array
+            description: Status of the order in partner's system
+            items:
+              $ref: "#/components/schemas/partnerFinancingStep"
+    
+    partnerFinancingStep:
+      type: string
+      enum:
+        - 'sent'
+        - 'onboarding-merchant'
+        - 'onboarding-customer'
+        - 'customer-denied'
+        - 'processing-application'
+        - 'denied'
+        - 'financed'
+      description: |
+        Current processing step of an order in partner's system.
+        Possible values are
+        * sent -> Order is sent to the partner.
+        * onboarding-merchant -> Partner is onboarding merchant
+        * onboarding-customer -> Partner is onboarding customer
+        * customer-denied -> Customer application is denied by partner
+        * processing-application -> Partner is processing the application
+        * denied -> Order is denied by partner
+        * financed -> Order is financed by partner
 
     error:
       type: object
