@@ -1099,7 +1099,7 @@ components:
         creditorName: 
           type: string
           description: Creditor name
-          example: "Lidion"
+          example: "A creditor"
         debtorId:
           type: string
           description: Debtor id
@@ -1113,7 +1113,7 @@ components:
           example: "2022-02-02"
         feeSettings:
           $ref: "#/components/schemas/feeSettings"
-        markedToBalanceAt: # Should it be put in doc?
+        markedToBalanceAt:
           type: string
           description: Date when the account was marked to balance
           format: date
@@ -1805,16 +1805,16 @@ components:
             example: "63b597c72e7e42972e5dec23"
           sentToPartnerAt:
             type: string
-            description: Date when the order was sent to the partner
+            description: Date when the order was sent to Moank
             format: date
             example: "2022-02-02"
           claimId:
             type: string
-            description: Order id in partner's system
+            description: Order id in Moank's system
             example: "63b597c72e7e42972e5dec23"
           status:
             type: array
-            description: Status of the order in partner's system
+            description: Status of the order in Moank's system
             items:
               $ref: "#/components/schemas/partnerFinancingStep"
     
@@ -1829,15 +1829,15 @@ components:
         - 'denied'
         - 'financed'
       description: |
-        Current processing step of an order in partner's system.
+        Current processing step of an order in Moank's system.
         Possible values are
-        * sent -> Order is sent to the partner.
-        * onboarding-merchant -> Partner is onboarding merchant
-        * onboarding-customer -> Partner is onboarding customer
-        * customer-denied -> Customer application is denied by partner
-        * processing-application -> Partner is processing the application
-        * denied -> Order is denied by partner
-        * financed -> Order is financed by partner
+        * sent -> Order is sent to the Moank.
+        * onboarding-merchant -> Moank is onboarding merchant
+        * onboarding-customer -> Moank is onboarding customer
+        * customer-denied -> Customer application is denied by Moank
+        * processing-application -> Moank is processing the application
+        * denied -> Order is denied by Moank
+        * financed -> Order is financed by Moank
 
     error:
       type: object
