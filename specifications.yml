@@ -1008,6 +1008,7 @@ components:
         - items
         - termsOfPayment
         - orderReferenceNumber
+        - paymentReference
         - financialProduct
         - issueDate
       properties:
