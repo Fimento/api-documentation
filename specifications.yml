@@ -1009,6 +1009,7 @@ components:
         - termsOfPayment
         - orderReferenceNumber
         - financialProduct
+        - issueDate
       properties:
         sellerId:
           type: string
