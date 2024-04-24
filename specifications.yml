@@ -8,7 +8,10 @@ info:
     # Postman collection
     <a href="./postman_collection.json" download> [Download Postman collection] </a>
 
-    To use the collection, set the `UNAME` and `PWORD` variables in the root folder of the collection to the credentials received from Fimento.
+    # Postman environment
+    <a href="./postman_environment.json" download> [Download Postman environment] </a>
+
+    To use the collection, set the `UNAME` and `PWORD` variables in the root environment to the credentials received from Fimento.
     # Test objects
     Test objects can be used in the staging environment in order to test specific flows. If the customer has its `organisationNumber` equal to one of the test objects, the `applicationStatus` returned by Fimento for the create application endpoint will always be the same one as described in the following table:
     Organisation Number|Application Status
