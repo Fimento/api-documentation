@@ -229,6 +229,8 @@ paths:
           $ref: "#/components/responses/dataError"
         401:
           $ref: "#/components/responses/authError"
+        403:
+          $ref: "#/components/responses/forbiddenError"
         500:
           $ref: "#/components/responses/serverError"
       security:
@@ -321,6 +323,8 @@ paths:
           $ref: "#/components/responses/dataError"
         401:
           $ref: "#/components/responses/authError"
+        403:
+          $ref: "#/components/responses/forbiddenError"
         404:
           $ref: "#/components/responses/notFoundError"
         500:
@@ -574,6 +578,13 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/authError"
+    
+    forbiddenError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/forbiddenError"
 
     notFoundError:
       description: Application not found
@@ -1052,7 +1063,7 @@ components:
           description: If the invoice amount should be rounded or not
         issueDate:
           type: string
-          description: Issue date of invoice
+          description: Issue date of invoice. Optional if activation date is provided
           format: date
           example: "2022-02-02"
         orderReferenceNumber:
@@ -1061,7 +1072,7 @@ components:
           example: "234578169728"
         paymentReference:
           type: string
-          description: Payment reference number of order to be used when paying order
+          description: Payment reference number of order to be used when paying order. Optional if using disclosed factoring. 
           example: "234578169728"
         isForborne:
           type: boolean
@@ -1293,6 +1304,8 @@ components:
           $ref: "#/components/schemas/currency"
         type:
           $ref: "#/components/schemas/transactionType"
+        feeType:
+          $ref: "#/components/schemas/feeType"
         description:
           type: string
           description: Description of transaction
@@ -1840,6 +1853,51 @@ components:
         * processing-application -> Moank is processing the application
         * denied -> Order is denied by Moank
         * financed -> Order is financed by Moank
+    
+    feeType:
+      type: string
+      enum:
+        - item
+        - reminder
+        - debt-collection
+        - late
+        - startup
+        - invoice
+        - administration
+        - freight
+        - round-off
+        - financing
+        - financing-non-vat
+        - financing-international
+        - purchase
+        - serviced
+        - vat
+        - interest
+        - interest-non-vat
+        - interest-international
+        - late-interest
+      description: |
+        Type of fee.
+        Possible values are
+        * item -> the fee is an item fee.
+        * reminder -> the fee is a reminder fee.
+        * debt-collection -> the fee is a debt collection fee.
+        * late -> the fee is a late fee.
+        * startup -> the fee is a startup fee.
+        * invoice -> the fee is an invoice fee.
+        * administration -> the fee is an administration fee.
+        * freight -> the fee is a freight fee.
+        * round-off -> the fee is a round-off fee.
+        * financing -> the fee is a financing fee.
+        * financing-non-vat -> the fee is a financing fee without VAT for orders from Swedish company.
+        * financing-international -> the fee is a financing fee for orders from international company.
+        * purchase -> the fee is a purchase fee.
+        * serviced -> the fee is a serviced fee.
+        * vat -> the fee is a VAT fee for orders from Swedish company.
+        * interest -> the fee is an interest fee.
+        * interest-non-vat -> the fee is an interest fee without VAT for orders from Swedish company.
+        * interest-international -> the fee is an interest fee for orders from international company.
+        * late-interest -> the fee is a late interest fee.
 
     error:
       type: object
@@ -1883,6 +1941,16 @@ components:
               example: 401
             message:
               example: Unauthorized
+
+    forbiddenError:
+      allOf:
+        - $ref: "#/components/schemas/error"
+        - type: object
+          properties:
+            status:
+              example: 403
+            message:
+              example: Forbidden
 
     notFoundError:
       allOf:
