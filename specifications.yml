@@ -1,6 +1,9 @@
 openapi: 3.0.0
 info:
   title: Fimento Partner API
+  x-logo:
+    url: "dist/assets/fimento_logo.svg"
+    href: "https://www.fimento.com/"
   version: 1.0.0
   description: |
     The Fimento Open API can be used by Fimento's partners in order to provide financial products to their end customers within their own application/website.
