@@ -6,11 +6,9 @@ html {
 }
 
 .fimento-header {
-    margin-left: 50px;
-    height: 90px;
+    height: 50px;
     display: flex;
     align-items: center;
-    justify-content: left;
 }
 
 .fimento-footer {
