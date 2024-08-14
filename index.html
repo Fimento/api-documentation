@@ -10,13 +10,8 @@
 </head>
 
 <body>
-  <header class="fimento-header">
-    <a href="https://www.fimento.com/">
-      <img src="./dist/assets/fimento_logo.svg" />
-    </a>
-  </header>
   <div>
-    <redoc spec-url='./specifications.yml'></redoc>
+    <redoc/>
   </div>
   <footer class="fimento-footer">
     <p>Copyright ©<span id="year"></span> Fimento. Alla rättigheter förbehålls.</p>
@@ -24,6 +19,41 @@
   <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"> </script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+  <script>
+    Redoc.init('./specifications.yml', {
+      theme: {
+        logo: {
+          gutter: '30px',
+        },
+        sidebar: {
+          backgroundColor: '#fcfcfc',
+          textColor: '#141414',
+          activeTextColor: '#f95738',
+        },
+        colors: {
+          primary: {
+            main: '#f95738',
+          },
+          error: {
+            main: '#dd0000',
+          },
+          text: {
+            primary: '#141414',
+          },
+          border: {
+            dark: 'rgba(0,0,0, 0.1)',
+            light: '#ffffff',
+          },
+        },
+        schema: {
+          linesColor: '#141414',
+          typeNameColor: '#dd0000',
+          typeTitleColor: '#141414',
+          requireLabelColor: '#141414',
+        },
+      }
+    })
   </script>
 </body>
 
